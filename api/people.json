@@ -1,0 +1,64 @@
+{
+  "people": [
+    {
+      "_id": "12345678a",
+      "name": "Dean Winchester",
+      "birthDate": "503193600000",
+      "owner": "abcd1111",
+      "gifts": [
+        {
+          "_id": "aaaaaa",
+          "name": "10Kg bag of salt",
+          "price": 35.0,
+          "store": {
+            "name": "Target",
+            "productURL": "https://target.com"
+          }
+        },
+        {
+          "_id": "bbbbbb",
+          "name": "Jug of Holy Water",
+          "price": 81.0,
+          "store": {
+            "name": "Walmart",
+            "productURL": "https://walmart.com"
+          }
+        }
+      ]
+    },
+    {
+      "_id": "12345679b",
+      "name": "Sam Winchester",
+      "birthDate": "608097600000",
+      "owner": "abcd7777",
+      "gifts": [
+        {
+          "_id": "cccccc",
+          "name": "Australian Sheppard puppy",
+          "price": 750.0,
+          "store": {
+            "name": "Humane Society",
+            "productURL": "https://humane.org"
+          }
+        }
+      ]
+    },
+    {
+      "_id": "12345677c",
+      "name": "Garth",
+      "birthDate": "651556800000",
+      "owner": "abcd1111",
+      "gifts": [
+        {
+          "_id": "dddddd",
+          "name": "AMC Gremlin",
+          "price": 3500.0,
+          "store": {
+            "name": "Car Canada",
+            "productURL": "https://carcanada.ca"
+          }
+        }
+      ]
+    }
+  ]
+}

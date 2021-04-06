@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "_id": "abcd1111",
+      "firstName": "Steve",
+      "lastName": "Griffith",
+      "email": "steve@home.org",
+      "password": "password"
+    },
+    {
+      "_id": "abcd7777",
+      "firstName": "Rashad",
+      "lastName": "Sharaf",
+      "email": "rashad@shopify.org",
+      "password": "password"
+    },
+    {
+      "_id": "abcd9999",
+      "firstName": "Robert",
+      "lastName": "McKenney",
+      "email": "robert@cloud.org",
+      "password": "password"
+    }
+  ]
+}
