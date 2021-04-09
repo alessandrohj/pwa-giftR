@@ -12,7 +12,7 @@ const APP = {
     console.log("init");
     //register service worker
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").then(
+      navigator.serviceWorker.register("./sw.js").then(
         (registration) => {
           APP.SW = registration.installing || registration.waiting || registration.active;
         },
