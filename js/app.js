@@ -1,8 +1,9 @@
 const APP = {
   //TODO: update the URL to match your app's url
-  // baseURL: 'http://127.0.0.1:5500/api/',
+  baseURL: 'https://giftr.mad9124.rocks/',
   //TODO: update the key for session storage
-  OWNERKEY: "giftr-<MY NAME HERE>-owner",
+  OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
+  token: null,
   owner: null,
   GIFTS: [],
   PEOPLE: [],
@@ -73,7 +74,7 @@ const APP = {
     } else {
       //send the user back to the home page and log them out
       //TODO: add the check via the API for a user being logged in and logging out
-      location.href = "/index.html?out";
+      location.href = "/pwa-giftR/index.html?out";
     }
   },
   addListeners() {
@@ -107,7 +108,7 @@ const APP = {
               APP.owner = user[0]._id;
               sessionStorage.setItem(APP.OWNERKEY, APP.owner);
               console.log("registered... go to people page");
-              location.href = "/proj4-pwa-starter/people.html";
+              location.href = "/pwa-giftR/people.html";
             });
         } else {
           console.warn("No email address");
@@ -121,31 +122,9 @@ const APP = {
         let email = document.getElementById("email").value;
         email = email.trim();
         //TODO: send email and password AND username to API call
-        if (email) {
-          let url = APP.baseURL + "users.json";
-          fetch(url)
-            .then(
-              (resp) => {
-                if (resp.ok) return resp.json();
-                throw new Error(resp.statusText);
-              },
-              (err) => {
-                //failed to fetch user
-                console.warn({ err });
-              }
-            )
-            .then((data) => {
-              //TODO: do the user validation in the API
-              let user = data.users.filter((user) => user.email === email);
-              APP.owner = user[0]._id;
-              sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-              console.log("logged in... go to people page");
-              location.href = `/proj4-pwa-starter/people.html?owner=${APP.owner}`;
-            })
-            .catch((err) => {
-              //TODO: global error handler function
-              console.warn({ err });
-            });
+        let password = document.getElementById('password').value;
+        if (email && password) {
+          APP.getToken(email, password)
         } else {
           console.warn("No email address");
         }
@@ -203,6 +182,64 @@ const APP = {
       });
     }
   },
+  getToken: (email, password)=>{
+    let url = APP.baseURL + "auth/tokens"
+    let options = {
+      method: 'POST',
+      body: JSON.stringify({"email": email, "password": `${password}`}),
+      headers: {
+        'Content-type': 'application/json',
+        'x-api-key': 'deje0014'
+      }
+    }
+    fetch(url, options)
+    .then(response =>{
+      if (response.ok)
+      return response.json()
+    })
+    .then(data=>{
+      console.log("This is the token", data['data'].token);
+      APP.token = data['data'].token;
+      APP.validateToken(email, password);
+    })
+    .catch(err=>console.warn(err))
+  },
+  validateToken: (email, password)=>{
+    let url = APP.baseURL + "auth/users/me"
+    let options = {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer ' + APP.token,
+        'x-api-key': 'deje0014'
+      }
+    }
+    fetch(url, options)
+            .then(
+              (resp) => {
+                if (resp.ok) {
+                return resp.json();}
+                throw new Error(resp.statusText);
+              },
+              (err) => {
+                //failed to fetch user
+                console.warn({ err });
+              }
+            )
+            .then((data) => {
+              //TODO: do the user validation in the API
+              console.log(data);
+              // let user = data.filter((user) => user.email === email);
+              APP.owner = data['data']._id;
+              sessionStorage.setItem(APP.OWNERKEY, APP.owner);
+              console.log("logged in... go to people page");
+              location.href = `/pwa-giftR/people.html?owner=${APP.owner}`;
+            })
+            .catch((err) => {
+              //TODO: global error handler function
+              console.warn({ err });
+            });
+  },
   delGift(ev) {
     ev.preventDefault();
     console.log(ev.target);
@@ -230,7 +267,7 @@ const APP = {
       //go see the gifts for this person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       //we can pass person_id by sessionStorage or queryString or history.state ?
-      let url = `/proj4-pwa-starter/gifts.html?owner=${APP.owner}&pid=${id}`;
+      let url = `/pwa-giftR/gifts.html?owner=${APP.owner}&pid=${id}`;
       location.href = url;
     }
   },
@@ -310,7 +347,7 @@ const APP = {
               >
             </div>
             <div class="card-action light-green darken-4">
-              <a href="/proj4-pwa-starter/gifts.html" class="view-gifts white-text"
+              <a href="/pwa-giftR/gifts.html" class="view-gifts white-text"
                 ><i class="material-icons">playlist_add</i> View Gifts</a
               >
             </div>
@@ -326,7 +363,7 @@ const APP = {
       //get the name of the person to display in the title
       let a = document.querySelector(".person-name a");
       a.textContent = APP.PNAME;
-      a.href = `/proj4-pwa-starter/people.html?owner=${APP.owner}`;
+      a.href = `/pwa-giftR/people.html?owner=${APP.owner}`;
       //TODO: display message if there are no gifts
 
       container.innerHTML = APP.GIFTS.map((gift) => {
