@@ -84,35 +84,36 @@ const APP = {
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
+        location.href = "/pwa-giftR/register.html";
         //go to people page after reg & login success
         //TODO: api call
         let email = document.getElementById("email").value;
         email = email.trim();
         //TODO: send email and password AND username to API call
-        if (email) {
-          let url = APP.baseURL + "users.json";
-          fetch(url)
-            .then(
-              (resp) => {
-                if (resp.ok) return resp.json();
-                throw new Error(resp.statusText);
-              },
-              (err) => {
-                //failed to fetch user
-                console.warn({ err });
-              }
-            )
-            .then((data) => {
-              //TODO: do the user validation in the API
-              let user = data.users.filter((user) => user.email === email);
-              APP.owner = user[0]._id;
-              sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-              console.log("registered... go to people page");
-              location.href = "/pwa-giftR/people.html";
-            });
-        } else {
-          console.warn("No email address");
-        }
+        // if (email) {
+        //   let url = APP.baseURL + "users.json";
+        //   fetch(url)
+        //     .then(
+        //       (resp) => {
+        //         if (resp.ok) return resp.json();
+        //         throw new Error(resp.statusText);
+        //       },
+        //       (err) => {
+        //         //failed to fetch user
+        //         console.warn({ err });
+        //       }
+        //     )
+        //     .then((data) => {
+        //       //TODO: do the user validation in the API
+        //       let user = data.users.filter((user) => user.email === email);
+        //       APP.owner = user[0]._id;
+        //       sessionStorage.setItem(APP.OWNERKEY, APP.owner);
+        //       console.log("registered... go to people page");
+        //       location.href = "/pwa-giftR/people.html";
+        //     });
+        // } else {
+        //   console.warn("No email address");
+        // }
       });
 
       let btnLogin = document.getElementById("btnLogin");
@@ -124,11 +125,27 @@ const APP = {
         //TODO: send email and password AND username to API call
         let password = document.getElementById('password').value;
         if (email && password) {
-          APP.getToken(email, password)
+          APP.getToken(email, password) //send data to API
         } else {
           console.warn("No email address");
         }
       });
+    }
+    //REGISTER PAGE
+    if (APP.page === "register") {
+      let btnReg = document.getElementById("btnRegister");
+      btnReg.addEventListener("click", (ev) => {
+        let firstName = document.getElementById("firstName").value;
+        let lastName = document.getElementById("lastName").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let payload = {first: firstName, last: lastName, emailAddress: email, pass: password};
+
+        if(payload){
+          APP.registerUser(payload);
+        }
+
+      })
     }
 
     //PEOPLE PAGE
@@ -200,11 +217,11 @@ const APP = {
     .then(data=>{
       console.log("This is the token", data['data'].token);
       APP.token = data['data'].token;
-      APP.validateToken(email, password);
+      APP.validateToken();
     })
     .catch(err=>console.warn(err))
   },
-  validateToken: (email, password)=>{
+  validateToken: ()=>{
     let url = APP.baseURL + "auth/users/me"
     let options = {
       method: 'GET',
@@ -240,6 +257,29 @@ const APP = {
               console.warn({ err });
             });
   },
+  registerUser: (payload)=>{
+    // email, password, firstName, lastName
+    console.log(payload)
+    let url = APP.baseURL + "auth/users"
+    let options = {
+      method: 'POST',
+      body: JSON.stringify({"firstName": payload.first, "lastName": payload.last, "email": payload.emailAddress, "password": `${payload.pass}`}),
+      headers: {
+        'Content-type': 'application/json',
+        'x-api-key': 'deje0014'
+      }
+    }
+    fetch(url, options)
+    .then(response =>{
+      if (response.ok)
+      return response.json()
+    })
+    .then(data=>{
+      APP.getToken(payload.emailAddress, payload.pass);
+    })
+    .catch(err=>console.warn(err))
+  },
+
   delGift(ev) {
     ev.preventDefault();
     console.log(ev.target);
