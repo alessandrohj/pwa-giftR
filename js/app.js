@@ -12,22 +12,22 @@ const APP = {
   init() {
     console.log("init");
     //register service worker
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").then(
-        (registration) => {
-          APP.SW = registration.installing || registration.waiting || registration.active;
-        },
-        (error) => {
-          console.log("Service worker registration failed:", error);
-        }
-      );
-      navigator.serviceWorker.addEventListener("controllerchange", async () => {
-        APP.SW = navigator.serviceWorker.controller;
-      });
-      navigator.serviceWorker.addEventListener("message", APP.onMessage);
-    } else {
-      console.log("Service workers are not supported.");
-    }
+    // if ("serviceWorker" in navigator) {
+    //   navigator.serviceWorker.register("./sw.js").then(
+    //     (registration) => {
+    //       APP.SW = registration.installing || registration.waiting || registration.active;
+    //     },
+    //     (error) => {
+    //       console.log("Service worker registration failed:", error);
+    //     }
+    //   );
+    //   navigator.serviceWorker.addEventListener("controllerchange", async () => {
+    //     APP.SW = navigator.serviceWorker.controller;
+    //   });
+    //   navigator.serviceWorker.addEventListener("message", APP.onMessage);
+    // } else {
+    //   console.log("Service workers are not supported.");
+    // }
     //run the pageLoaded function
     APP.pageLoaded();
 
@@ -74,7 +74,7 @@ const APP = {
     } else {
       //send the user back to the home page and log them out
       //TODO: add the check via the API for a user being logged in and logging out
-      location.href = "/pwa-giftR/index.html?out";
+      location.href = "/index.html?out";
     }
   },
   addListeners() {
@@ -84,7 +84,7 @@ const APP = {
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
-        location.href = "/pwa-giftR/register.html";
+        location.href = "/register.html";
         //go to people page after reg & login success
         //TODO: api call
         let email = document.getElementById("email").value;
@@ -109,7 +109,7 @@ const APP = {
         //       APP.owner = user[0]._id;
         //       sessionStorage.setItem(APP.OWNERKEY, APP.owner);
         //       console.log("registered... go to people page");
-        //       location.href = "/pwa-giftR/people.html";
+        //       location.href = "/people.html";
         //     });
         // } else {
         //   console.warn("No email address");
@@ -250,7 +250,7 @@ const APP = {
               APP.owner = data['data']._id;
               sessionStorage.setItem(APP.OWNERKEY, APP.owner);
               console.log("logged in... go to people page");
-              location.href = `/pwa-giftR/people.html?owner=${APP.owner}`;
+              location.href = `/people.html?owner=${APP.owner}`;
             })
             .catch((err) => {
               //TODO: global error handler function
@@ -307,7 +307,7 @@ const APP = {
       //go see the gifts for this person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       //we can pass person_id by sessionStorage or queryString or history.state ?
-      let url = `/pwa-giftR/gifts.html?owner=${APP.owner}&pid=${id}`;
+      let url = `/gifts.html?owner=${APP.owner}&pid=${id}`;
       location.href = url;
     }
   },
@@ -387,7 +387,7 @@ const APP = {
               >
             </div>
             <div class="card-action light-green darken-4">
-              <a href="/pwa-giftR/gifts.html" class="view-gifts white-text"
+              <a href="/gifts.html" class="view-gifts white-text"
                 ><i class="material-icons">playlist_add</i> View Gifts</a
               >
             </div>
@@ -403,7 +403,7 @@ const APP = {
       //get the name of the person to display in the title
       let a = document.querySelector(".person-name a");
       a.textContent = APP.PNAME;
-      a.href = `/pwa-giftR/people.html?owner=${APP.owner}`;
+      a.href = `/people.html?owner=${APP.owner}`;
       //TODO: display message if there are no gifts
 
       container.innerHTML = APP.GIFTS.map((gift) => {
