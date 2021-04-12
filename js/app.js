@@ -284,8 +284,25 @@ const APP = {
     if (btn.classList.contains("del-gift")) {
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       //TODO: remove from DB by calling API
-      APP.GIFTS = APP.GIFTS.filter((gift) => gift._id != id);
-      APP.buildGiftList();
+      let url = APP.baseURL + "api/people/" + APP.PID + "/gifts/" + id;
+      let options = {
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + APP.token,
+          "x-api-key": "deje0014",
+        },
+      };
+      fetch(url, options)
+        .then((resp) => {
+          if (resp.ok) return resp.json();
+          throw new Error(resp.statusText);
+        })
+        .then((data) => {
+          APP.GIFTS = APP.GIFTS.filter((gift) => gift._id != id);
+          APP.buildGiftList();
+        })
+        .catch((err) => console.warn(err));
     }
   },
   delOrViewPerson(ev) {
