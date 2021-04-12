@@ -3,7 +3,7 @@ const APP = {
   baseURL: 'https://giftr.mad9124.rocks/',
   //TODO: update the key for session storage
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
-  token: null,
+  token: sessionStorage.getItem('token'),
   owner: null,
   GIFTS: [],
   PEOPLE: [],
@@ -216,12 +216,12 @@ const APP = {
     })
     .then(data=>{
       console.log("This is the token", data['data'].token);
-      APP.token = data['data'].token;
+      sessionStorage.setItem('token', data['data'].token);
       APP.validateToken();
     })
     .catch(err=>console.warn(err))
   },
-  validateToken: ()=>{
+  validateToken: (token)=>{
     let url = APP.baseURL + "auth/users/me"
     let options = {
       method: 'GET',
@@ -299,8 +299,25 @@ const APP = {
       //delete a person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       //TODO: remove from DB by calling API
-      APP.PEOPLE = APP.PEOPLE.filter((person) => person._id != id);
+      let url = APP.baseURL + "api/people/" + id;
+      let options = {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer ' + APP.token,
+        'x-api-key': 'deje0014'
+      }
+    }
+    fetch(url,options)
+    .then(resp=>{
+      if(resp.ok) return resp.json()
+      throw new Error(resp.statusText);
+    })
+    .then(data=> {
+      APP.PEOPLE = data.data
       APP.buildPeopleList();
+    })
+    .catch(err=>console.warn(err))
     }
     if (btn.classList.contains("view-gifts")) {
       console.log("go view gifts");
@@ -322,15 +339,45 @@ const APP = {
       //TODO: actually send this to the API for saving
       //TODO: let the API create the _id
       let person = {
-        _id: Date.now(),
         name,
         birthDate,
         gifts: [],
         owner: APP.owner,
       };
-      APP.PEOPLE.push(person); //TODO: save through API not here
-      //then update the interface
-      APP.buildPeopleList();
+
+      let url = APP.baseURL + "api/people"
+      let options = {
+        method: 'POST',
+        body: JSON.stringify(person),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': 'Bearer ' + APP.token,
+          'x-api-key': 'deje0014'
+        }
+      }
+      fetch(url, options)
+      .then(
+        (resp) => {
+          if (resp.ok) {
+          return resp.json();}
+          throw new Error(resp.statusText);
+        },
+        (err) => {
+          //failed to fetch user
+          console.warn({ err });
+        }
+      )
+      .then((data) => {
+        //TODO: do the user validation in the API
+        console.log("Added person", data);
+        APP.PEOPLE = data.data
+        APP.buildPeopleList();
+
+      })
+      .catch((err) => {
+        //TODO: global error handler function
+        console.warn({ err });
+      });
     }
   },
   addGift() {
@@ -452,8 +499,16 @@ const APP = {
     //TODO:
     //get the list of all people for the user_id
     if (!APP.owner) return;
-    let url = `${APP.baseURL}people.json?owner=${APP.owner}`;
-    fetch(url)
+    let url = APP.baseURL + `api/people`;
+    let options = {
+      method: "GET",
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer ' + APP.token,
+        'x-api-key': 'deje0014'
+      }
+    }
+    fetch(url, options)
       .then(
         (resp) => {
           if (resp.ok) return resp.json();
@@ -465,13 +520,14 @@ const APP = {
       )
       .then((data) => {
         //TODO: filter this on the serverside NOT here
-        APP.PEOPLE = data.people.filter((person) => person.owner == APP.owner);
+        APP.PEOPLE = data.data
         APP.buildPeopleList();
       })
       .catch((err) => {
         //TODO: global error handler function
         console.warn({ err });
       });
+     
   },
   getGifts() {
     //TODO:
@@ -479,6 +535,7 @@ const APP = {
     if (!APP.owner) return;
     //TODO: use a valid URL and queryString for your API
     let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
+    
     fetch(url)
       .then(
         (resp) => {
