@@ -417,26 +417,30 @@ const APP = {
     if (container) {
       //TODO: add handling for null and undefined or missing values
       //TODO: display message if there are no people
-      container.innerHTML = APP.PEOPLE.map((person) => {
-        let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
-        console.log(dt);
-        return `<div class="card person" data-id="${person._id}">
-            <div class="card-content light-green-text text-darken-4">
-              <span class="card-title">${person.name}</span>
-              <p class="dob">${dt}</p>
-            </div>
-            <div class="fab-anchor">
-              <a class="btn-floating halfway-fab red del-person"
-                ><i class="material-icons del-person">delete</i></a
-              >
-            </div>
-            <div class="card-action light-green darken-4">
-              <a href="/gifts.html" class="view-gifts white-text"
-                ><i class="material-icons">playlist_add</i> View Gifts</a
-              >
-            </div>
-          </div>`;
-      }).join("\n");
+      if (APP.PEOPLE.length == 0) {
+        container.innerHTML = "No people on the list.";
+      } else {
+        container.innerHTML = APP.PEOPLE.map((person) => {
+          let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
+
+          return `<div class="card person" data-id="${person._id}">
+              <div class="card-content light-green-text text-darken-4">
+                <span class="card-title">${person.name}</span>
+                <p class="dob">${dt}</p>
+              </div>
+              <div class="fab-anchor">
+                <a class="btn-floating halfway-fab red del-person"
+                  ><i class="material-icons del-person">delete</i></a
+                >
+              </div>
+              <div class="card-action light-green darken-4">
+                <a href="/gifts.html" class="view-gifts white-text"
+                  ><i class="material-icons">playlist_add</i> View Gifts</a
+                >
+              </div>
+            </div>`;
+        }).join("\n");
+      }
     } else {
       //TODO: error message
     }
