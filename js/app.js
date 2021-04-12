@@ -314,7 +314,7 @@ const APP = {
       throw new Error(resp.statusText);
     })
     .then(data=> {
-      APP.PEOPLE = data.data
+      APP.PEOPLE = APP.PEOPLE.filter((person) => person._id != id)
       APP.buildPeopleList();
     })
     .catch(err=>console.warn(err))
@@ -368,9 +368,8 @@ const APP = {
         }
       )
       .then((data) => {
-        //TODO: do the user validation in the API
         console.log("Added person", data);
-        APP.PEOPLE = data.data
+        APP.PEOPLE.push(data.data)
         APP.buildPeopleList();
 
       })
