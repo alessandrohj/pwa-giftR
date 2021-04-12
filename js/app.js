@@ -1,9 +1,9 @@
 const APP = {
   //TODO: update the URL to match your app's url
-  baseURL: 'https://giftr.mad9124.rocks/',
+  baseURL: "https://giftr.mad9124.rocks/",
   //TODO: update the key for session storage
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
-  token: sessionStorage.getItem('token'),
+  token: sessionStorage.getItem("token"),
   owner: null,
   GIFTS: [],
   PEOPLE: [],
@@ -123,9 +123,9 @@ const APP = {
         let email = document.getElementById("email").value;
         email = email.trim();
         //TODO: send email and password AND username to API call
-        let password = document.getElementById('password').value;
+        let password = document.getElementById("password").value;
         if (email && password) {
-          APP.getToken(email, password) //send data to API
+          APP.getToken(email, password); //send data to API
         } else {
           console.warn("No email address");
         }
@@ -139,13 +139,12 @@ const APP = {
         let lastName = document.getElementById("lastName").value;
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
-        let payload = {first: firstName, last: lastName, emailAddress: email, pass: password};
+        let payload = { first: firstName, last: lastName, emailAddress: email, pass: password };
 
-        if(payload){
+        if (payload) {
           APP.registerUser(payload);
         }
-
-      })
+      });
     }
 
     //PEOPLE PAGE
@@ -199,85 +198,84 @@ const APP = {
       });
     }
   },
-  getToken: (email, password)=>{
-    let url = APP.baseURL + "auth/tokens"
+  getToken: (email, password) => {
+    let url = APP.baseURL + "auth/tokens";
     let options = {
-      method: 'POST',
-      body: JSON.stringify({"email": email, "password": `${password}`}),
+      method: "POST",
+      body: JSON.stringify({ email: email, password: `${password}` }),
       headers: {
-        'Content-type': 'application/json',
-        'x-api-key': 'deje0014'
-      }
-    }
+        "Content-type": "application/json",
+        "x-api-key": "deje0014",
+      },
+    };
     fetch(url, options)
-    .then(response =>{
-      if (response.ok)
-      return response.json()
-    })
-    .then(data=>{
-      console.log("This is the token", data['data'].token);
-      sessionStorage.setItem('token', data['data'].token);
-      APP.validateToken();
-    })
-    .catch(err=>console.warn(err))
+      .then((response) => {
+        if (response.ok) return response.json();
+      })
+      .then((data) => {
+        console.log("This is the token", data["data"].token);
+        sessionStorage.setItem("token", data["data"].token);
+        APP.validateToken();
+      })
+      .catch((err) => console.warn(err));
   },
-  validateToken: (token)=>{
-    let url = APP.baseURL + "auth/users/me"
+  validateToken: (token) => {
+    let url = APP.baseURL + "auth/users/me";
     let options = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer ' + APP.token,
-        'x-api-key': 'deje0014'
-      }
-    }
+        "Content-type": "application/json",
+        Authorization: "Bearer " + APP.token,
+        "x-api-key": "deje0014",
+      },
+    };
     fetch(url, options)
-            .then(
-              (resp) => {
-                if (resp.ok) {
-                return resp.json();}
-                throw new Error(resp.statusText);
-              },
-              (err) => {
-                //failed to fetch user
-                console.warn({ err });
-              }
-            )
-            .then((data) => {
-              //TODO: do the user validation in the API
-              console.log(data);
-              // let user = data.filter((user) => user.email === email);
-              APP.owner = data['data']._id;
-              sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-              console.log("logged in... go to people page");
-              location.href = `/people.html?owner=${APP.owner}`;
-            })
-            .catch((err) => {
-              //TODO: global error handler function
-              console.warn({ err });
-            });
+      .then(
+        (resp) => {
+          if (resp.ok) {
+            return resp.json();
+          }
+          throw new Error(resp.statusText);
+        },
+        (err) => {
+          //failed to fetch user
+          console.warn({ err });
+        }
+      )
+      .then((data) => {
+        //TODO: do the user validation in the API
+        console.log(data);
+        // let user = data.filter((user) => user.email === email);
+        APP.owner = data["data"]._id;
+        sessionStorage.setItem(APP.OWNERKEY, APP.owner);
+        console.log("logged in... go to people page");
+        location.href = `/people.html?owner=${APP.owner}`;
+      })
+      .catch((err) => {
+        //TODO: global error handler function
+        console.warn({ err });
+      });
   },
-  registerUser: (payload)=>{
+  registerUser: (payload) => {
     // email, password, firstName, lastName
-    console.log(payload)
-    let url = APP.baseURL + "auth/users"
+    console.log(payload);
+    let url = APP.baseURL + "auth/users";
     let options = {
-      method: 'POST',
-      body: JSON.stringify({"firstName": payload.first, "lastName": payload.last, "email": payload.emailAddress, "password": `${payload.pass}`}),
+      method: "POST",
+      body: JSON.stringify({ firstName: payload.first, lastName: payload.last, email: payload.emailAddress, password: `${payload.pass}` }),
       headers: {
-        'Content-type': 'application/json',
-        'x-api-key': 'deje0014'
-      }
-    }
+        "Content-type": "application/json",
+        "x-api-key": "deje0014",
+      },
+    };
     fetch(url, options)
-    .then(response =>{
-      if (response.ok)
-      return response.json()
-    })
-    .then(data=>{
-      APP.getToken(payload.emailAddress, payload.pass);
-    })
-    .catch(err=>console.warn(err))
+      .then((response) => {
+        if (response.ok) return response.json();
+      })
+      .then((data) => {
+        APP.getToken(payload.emailAddress, payload.pass);
+      })
+      .catch((err) => console.warn(err));
   },
 
   delGift(ev) {
@@ -301,23 +299,23 @@ const APP = {
       //TODO: remove from DB by calling API
       let url = APP.baseURL + "api/people/" + id;
       let options = {
-      method: 'DELETE',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer ' + APP.token,
-        'x-api-key': 'deje0014'
-      }
-    }
-    fetch(url,options)
-    .then(resp=>{
-      if(resp.ok) return resp.json()
-      throw new Error(resp.statusText);
-    })
-    .then(data=> {
-      APP.PEOPLE = APP.PEOPLE.filter((person) => person._id != id)
-      APP.buildPeopleList();
-    })
-    .catch(err=>console.warn(err))
+        method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + APP.token,
+          "x-api-key": "deje0014",
+        },
+      };
+      fetch(url, options)
+        .then((resp) => {
+          if (resp.ok) return resp.json();
+          throw new Error(resp.statusText);
+        })
+        .then((data) => {
+          APP.PEOPLE = APP.PEOPLE.filter((person) => person._id != id);
+          APP.buildPeopleList();
+        })
+        .catch((err) => console.warn(err));
     }
     if (btn.classList.contains("view-gifts")) {
       console.log("go view gifts");
@@ -345,38 +343,38 @@ const APP = {
         owner: APP.owner,
       };
 
-      let url = APP.baseURL + "api/people"
+      let url = APP.baseURL + "api/people";
       let options = {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(person),
         headers: {
-          'Content-type': 'application/json',
-          'Authorization': 'Bearer ' + APP.token,
-          'x-api-key': 'deje0014'
-        }
-      }
-      fetch(url, options)
-      .then(
-        (resp) => {
-          if (resp.ok) {
-          return resp.json();}
-          throw new Error(resp.statusText);
+          "Content-type": "application/json",
+          Authorization: "Bearer " + APP.token,
+          "x-api-key": "deje0014",
         },
-        (err) => {
-          //failed to fetch user
+      };
+      fetch(url, options)
+        .then(
+          (resp) => {
+            if (resp.ok) {
+              return resp.json();
+            }
+            throw new Error(resp.statusText);
+          },
+          (err) => {
+            //failed to fetch user
+            console.warn({ err });
+          }
+        )
+        .then((data) => {
+          console.log("Added person", data);
+          APP.PEOPLE.push(data.data);
+          APP.buildPeopleList();
+        })
+        .catch((err) => {
+          //TODO: global error handler function
           console.warn({ err });
-        }
-      )
-      .then((data) => {
-        console.log("Added person", data);
-        APP.PEOPLE.push(data.data)
-        APP.buildPeopleList();
-
-      })
-      .catch((err) => {
-        //TODO: global error handler function
-        console.warn({ err });
-      });
+        });
     }
   },
   addGift() {
@@ -420,7 +418,7 @@ const APP = {
       //TODO: add handling for null and undefined or missing values
       //TODO: display message if there are no people
       container.innerHTML = APP.PEOPLE.map((person) => {
-        let dt = new Date(parseInt(person.birthDate)).toLocaleDateString("en-CA");
+        let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
         console.log(dt);
         return `<div class="card person" data-id="${person._id}">
             <div class="card-content light-green-text text-darken-4">
@@ -502,11 +500,11 @@ const APP = {
     let options = {
       method: "GET",
       headers: {
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer ' + APP.token,
-        'x-api-key': 'deje0014'
-      }
-    }
+        "Content-type": "application/json",
+        Authorization: "Bearer " + APP.token,
+        "x-api-key": "deje0014",
+      },
+    };
     fetch(url, options)
       .then(
         (resp) => {
@@ -519,14 +517,13 @@ const APP = {
       )
       .then((data) => {
         //TODO: filter this on the serverside NOT here
-        APP.PEOPLE = data.data
+        APP.PEOPLE = data.data;
         APP.buildPeopleList();
       })
       .catch((err) => {
         //TODO: global error handler function
         console.warn({ err });
       });
-     
   },
   getGifts() {
     //TODO:
@@ -534,7 +531,7 @@ const APP = {
     if (!APP.owner) return;
     //TODO: use a valid URL and queryString for your API
     let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
-    
+
     fetch(url)
       .then(
         (resp) => {
