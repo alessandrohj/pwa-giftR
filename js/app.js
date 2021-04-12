@@ -140,7 +140,6 @@ const APP = {
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
         let payload = { first: firstName, last: lastName, emailAddress: email, pass: password };
-
         if (payload) {
           APP.registerUser(payload);
         }
@@ -370,6 +369,7 @@ const APP = {
           console.log("Added person", data);
           APP.PEOPLE.push(data.data);
           APP.buildPeopleList();
+          document.querySelector(".modal form").reset();
         })
         .catch((err) => {
           //TODO: global error handler function
