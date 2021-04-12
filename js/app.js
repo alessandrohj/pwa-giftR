@@ -367,6 +367,7 @@ const APP = {
         )
         .then((data) => {
           console.log("Added person", data);
+          console.log("saved..", data.data);
           APP.PEOPLE.push(data.data);
           APP.buildPeopleList();
           document.querySelector(".modal form").reset();
@@ -377,8 +378,9 @@ const APP = {
         });
     }
   },
-  addGift() {
+  addGift(ev) {
     //user clicked the save gift button in the modal
+    ev.preventDefault();
     let name = document.getElementById("name").value;
     let price = document.getElementById("price").value;
     let storeName = document.getElementById("storeName").value;
@@ -398,9 +400,42 @@ const APP = {
       };
       //add the gift to the current person
       //TODO: Actually send this to the API instead of just updating the array
-      APP.GIFTS.push(gift);
-      APP.buildGiftList();
-      document.querySelector(".modal form").reset();
+      let url = APP.baseURL + "api/people/" + APP.PID + "/gifts";
+      console.log(url);
+      let options = {
+        method: "POST",
+        body: JSON.stringify(gift),
+        headers: {
+          "Content-type": "application/json",
+          Authorization: "Bearer " + APP.token,
+          "x-api-key": "deje0014",
+        },
+      };
+      fetch(url, options)
+        .then(
+          (resp) => {
+            if (resp.ok) {
+              return resp.json();
+            }
+            throw new Error(resp.statusText);
+          },
+          (err) => {
+            //failed to fetch user
+            console.warn({ err });
+          }
+        )
+        .then((data) => {
+          console.log("Added gift", data);
+          APP.GIFTS.push(data.data.gifts);
+          // APP.GIFTS.push(gift);
+          console.log(APP.GIFTS);
+          APP.buildGiftList();
+          document.querySelector(".modal form").reset();
+        })
+        .catch((err) => {
+          //TODO: global error handler function
+          console.warn({ err });
+        });
     }
   },
   sendMessage(msg, target) {
@@ -530,35 +565,35 @@ const APP = {
       });
   },
   getGifts() {
+    APP.buildGiftList();
     //TODO:
     //get the list of all the gifts for the person_id and user_id
-    if (!APP.owner) return;
+    //if (!APP.owner) return;
     //TODO: use a valid URL and queryString for your API
-    let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
-
-    fetch(url)
-      .then(
-        (resp) => {
-          if (resp.ok) return resp.json();
-          throw new Error(resp.statusText);
-        },
-        (err) => {
-          console.warn({ err });
-        }
-      )
-      .then((data) => {
-        //TODO: filter this on the serverside NOT here
-        let peeps = data.people.filter((person) => person.owner == APP.owner);
-        //TODO: match the person id with the one from the querystring
-        let person = peeps.filter((person) => person._id == APP.PID);
-        APP.PNAME = person[0].name;
-        APP.GIFTS = person[0].gifts; //person is an array from filter()
-        APP.buildGiftList();
-      })
-      .catch((err) => {
-        //TODO: global error handler function
-        console.warn({ err });
-      });
+    //let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
+    // fetch(url)
+    // .then(
+    // (resp) => {
+    // if (resp.ok) return resp.json();
+    // throw new Error(resp.statusText);
+    // },
+    // (err) => {
+    // console.warn({ err });
+    // }
+    // )
+    // .then((data) => {
+    //TODO: filter this on the serverside NOT here
+    // let peeps = data.people.filter((person) => person.owner == APP.owner);
+    //TODO: match the person id with the one from the querystring
+    // let person = peeps.filter((person) => person._id == APP.PID);
+    // APP.PNAME = person[0].name;
+    // APP.GIFTS = person[0].gifts; //person is an array from filter()
+    // APP.buildGiftList();
+    // })
+    // .catch((err) => {
+    //TODO: global error handler function
+    // console.warn({ err });
+    // });
   },
 };
 
