@@ -341,7 +341,6 @@ const APP = {
         gifts: [],
         owner: APP.owner,
       };
-
       let url = APP.baseURL + "api/people";
       let options = {
         method: "POST",
@@ -401,7 +400,6 @@ const APP = {
       //add the gift to the current person
       //TODO: Actually send this to the API instead of just updating the array
       let url = APP.baseURL + "api/people/" + APP.PID + "/gifts";
-      console.log(url);
       let options = {
         method: "POST",
         body: JSON.stringify(gift),
@@ -426,9 +424,8 @@ const APP = {
         )
         .then((data) => {
           console.log("Added gift", data);
+          APP.PNAME = data.data.name;
           APP.GIFTS.push(data.data.gifts);
-          // APP.GIFTS.push(gift);
-          console.log(APP.GIFTS);
           APP.buildGiftList();
           document.querySelector(".modal form").reset();
         })
@@ -483,50 +480,54 @@ const APP = {
   buildGiftList: () => {
     let container = document.querySelector("section.row.gifts>div");
     if (container) {
-      //get the name of the person to display in the title
       let a = document.querySelector(".person-name a");
       a.textContent = APP.PNAME;
       a.href = `/people.html?owner=${APP.owner}`;
-      //TODO: display message if there are no gifts
-
-      container.innerHTML = APP.GIFTS.map((gift) => {
-        //TODO: add handling for null and undefined or missing values
-        //TODO: check for a valid URL before setting an href
-        let url = gift.store.productURL;
-        try {
-          url = new URL(url);
-          urlStr = url;
-        } catch (err) {
-          if (err.name == "TypeError") {
-            //not a valid url
-            url = "";
-            urlStr = "No valid URL provided";
+      //get the name of the person to display in the title
+      if (APP.GIFTS.length == 0) {
+        container.innerHTML = "No gift idea on the list.";
+      } else {
+        //TODO: display message if there are no gifts
+        container.innerHTML = APP.GIFTS.map((gift) => {
+          //TODO: add handling for null and undefined or missing values
+          //TODO: check for a valid URL before setting an href
+          console.log(gift);
+          let url = gift.store.productURL;
+          try {
+            url = new URL(url);
+            urlStr = url;
+          } catch (err) {
+            if (err.name == "TypeError") {
+              //not a valid url
+              url = "";
+              urlStr = "No valid URL provided";
+            }
           }
-        }
-        return `<div class="card gift" data-id="${gift._id}">
-            <div class="card-content light-green-text text-darken-4">
-              <h5 class="card-title idea">
-                <i class="material-icons">lightbulb</i> ${gift.name}
-              </h5>
-              <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
-              
-              <h6 class="store">
-                <i class="material-icons">room</i>${gift.store.name}</h6>
-              </h6>
-              <h6 class="link">
-                <i class="material-icons">link</i>
-                <a href="${url}" class="" target="_blank"
-                  >${urlStr}</a
+          return `<div class="card gift" data-id="${gift._id}">
+              <div class="card-content light-green-text text-darken-4">
+                <h5 class="card-title idea">
+                  <i class="material-icons">lightbulb</i> ${gift.name}
+                </h5>
+                <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
+                
+                <h6 class="store">
+                  <i class="material-icons">room</i>${gift.store.name}</h6>
+                </h6>
+                <h6 class="link">
+                  <i class="material-icons">link</i>
+                  <a href="${url}" class="" target="_blank"
+                    >${urlStr}</a
+                  >
+                </h6>
+              </div>
+              <div class="fab-anchor">
+                <a class="btn-floating halfway-fab red del-gift"
+                  ><i class="material-icons del-gift">delete</i></a
                 >
-              </h6>
-            </div>
-            <div class="fab-anchor">
-              <a class="btn-floating halfway-fab red del-gift"
-                ><i class="material-icons del-gift">delete</i></a
-              >
-            </div>
-          </div>`;
-      }).join("\n");
+              </div>
+            </div>`;
+        }).join("\n");
+      }
     } else {
       //TODO: error message
     }
@@ -565,35 +566,47 @@ const APP = {
       });
   },
   getGifts() {
-    APP.buildGiftList();
+    // APP.buildGiftList();
     //TODO:
     //get the list of all the gifts for the person_id and user_id
-    //if (!APP.owner) return;
-    //TODO: use a valid URL and queryString for your API
-    //let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
-    // fetch(url)
-    // .then(
-    // (resp) => {
-    // if (resp.ok) return resp.json();
-    // throw new Error(resp.statusText);
-    // },
-    // (err) => {
-    // console.warn({ err });
-    // }
-    // )
-    // .then((data) => {
-    //TODO: filter this on the serverside NOT here
-    // let peeps = data.people.filter((person) => person.owner == APP.owner);
-    //TODO: match the person id with the one from the querystring
-    // let person = peeps.filter((person) => person._id == APP.PID);
-    // APP.PNAME = person[0].name;
-    // APP.GIFTS = person[0].gifts; //person is an array from filter()
-    // APP.buildGiftList();
-    // })
-    // .catch((err) => {
-    //TODO: global error handler function
-    // console.warn({ err });
-    // });
+    if (!APP.owner) return;
+    // TODO: use a valid URL and queryString for your API
+    // let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
+    let url = APP.baseURL + "api/people/" + APP.PID;
+    let options = {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: "Bearer " + APP.token,
+        "x-api-key": "deje0014",
+      },
+    };
+    fetch(url, options)
+      .then(
+        (resp) => {
+          if (resp.ok) return resp.json();
+          throw new Error(resp.statusText);
+        },
+        (err) => {
+          console.warn({ err });
+        }
+      )
+      .then((data) => {
+        // TODO: filter this on the serverside NOT here
+        // let peeps = data.people.filter((person) => person.owner == APP.owner);
+        // TODO: match the person id with the one from the querystring
+        // let person = peeps.filter((person) => person._id == APP.PID);
+        // APP.PNAME = person[0].name;
+        // APP.GIFTS = person[0].gifts; //person is an array from filter()
+        console.log(data);
+        APP.PNAME = data.data.name;
+        APP.GIFTS = data.data.gifts;
+        APP.buildGiftList();
+      })
+      .catch((err) => {
+        // TODO: global error handler function
+        console.warn({ err });
+      });
   },
 };
 
