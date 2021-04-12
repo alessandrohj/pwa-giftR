@@ -201,7 +201,7 @@ const APP = {
     let url = APP.baseURL + "auth/tokens";
     let options = {
       method: "POST",
-      body: JSON.stringify({ email: email, password: `${password}` }),
+      body: JSON.stringify({ email: email, password: password }),
       headers: {
         "Content-type": "application/json",
         "x-api-key": "deje0014",
@@ -213,6 +213,7 @@ const APP = {
       })
       .then((data) => {
         console.log("This is the token", data["data"].token);
+        APP.token = data["data"].token;
         sessionStorage.setItem("token", data["data"].token);
         APP.validateToken();
       })
@@ -261,7 +262,7 @@ const APP = {
     let url = APP.baseURL + "auth/users";
     let options = {
       method: "POST",
-      body: JSON.stringify({ firstName: payload.first, lastName: payload.last, email: payload.emailAddress, password: `${payload.pass}` }),
+      body: JSON.stringify({ firstName: payload.first, lastName: payload.last, email: payload.emailAddress, password: payload.pass }),
       headers: {
         "Content-type": "application/json",
         "x-api-key": "deje0014",
@@ -272,6 +273,7 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
+        console.log(payload);
         APP.getToken(payload.emailAddress, payload.pass);
       })
       .catch((err) => console.warn(err));
