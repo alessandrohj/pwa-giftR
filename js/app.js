@@ -170,6 +170,11 @@ const APP = {
       document.querySelector("#modalAddPerson form").addEventListener("submit", (ev) => {
         ev.preventDefault();
       });
+
+      let btnLogOut = document.querySelector("#btnLogOut");
+      btnLogOut.addEventListener("click", (ev) => {
+        sessionStorage.removeItem("token");
+      });
     }
 
     //GIFTS PAGE
@@ -194,6 +199,10 @@ const APP = {
       //stop form submissions
       document.querySelector("#modalAddGift form").addEventListener("submit", (ev) => {
         ev.preventDefault();
+      });
+      let btnLogOut = document.querySelector("#btnLogOut");
+      btnLogOut.addEventListener("click", (ev) => {
+        sessionStorage.removeItem("token");
       });
     }
   },
