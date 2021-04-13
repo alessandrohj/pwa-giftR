@@ -5,6 +5,7 @@ const APP = {
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
+  ownerName: null,
   GIFTS: [],
   PEOPLE: [],
   PID: null,
@@ -68,8 +69,11 @@ const APP = {
   },
   getOwner() {
     let id = sessionStorage.getItem(APP.OWNERKEY);
+    let ownerName = sessionStorage.getItem("ownerName");
+
     if (id) {
       APP.owner = id;
+      APP.ownerName = ownerName;
       return APP;
     } else {
       //send the user back to the home page and log them out
@@ -170,13 +174,13 @@ const APP = {
       document.querySelector("#modalAddPerson form").addEventListener("submit", (ev) => {
         ev.preventDefault();
       });
-
       let btnLogOut = document.querySelector("#btnLogOut");
       btnLogOut.addEventListener("click", (ev) => {
         sessionStorage.removeItem("token");
+        sessionStorage.removeItem("ownerName");
+        sessionStorage.removeItem(APP.OWNERKEY);
       });
     }
-
     //GIFTS PAGE
     if (APP.page === "gifts") {
       //activate the add gift modal
@@ -203,6 +207,8 @@ const APP = {
       let btnLogOut = document.querySelector("#btnLogOut");
       btnLogOut.addEventListener("click", (ev) => {
         sessionStorage.removeItem("token");
+        sessionStorage.removeItem("ownerName");
+        sessionStorage.removeItem(APP.OWNERKEY);
       });
     }
   },
@@ -223,7 +229,10 @@ const APP = {
       .then((data) => {
         console.log("This is the token", data["data"].token);
         APP.token = data["data"].token;
+        APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
+        sessionStorage.setItem("ownerName", APP.ownerName);
+
         APP.validateToken();
       })
       .catch((err) => console.warn(err));
@@ -258,6 +267,8 @@ const APP = {
         APP.owner = data["data"]._id;
         sessionStorage.setItem(APP.OWNERKEY, APP.owner);
         console.log("logged in... go to people page");
+        APP.ownerName = data.data.firstName + " " + data.data.lastName;
+        sessionStorage.setItem("ownerName", APP.ownerName);
         location.href = `/people.html?owner=${APP.owner}`;
       })
       .catch((err) => {
@@ -480,26 +491,29 @@ const APP = {
       if (APP.PEOPLE.length == 0) {
         container.innerHTML = "No people on the list.";
       } else {
+        let listOwner = document.createElement("p");
+        listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
         container.innerHTML = APP.PEOPLE.map((person) => {
           let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
-
-          return `<div class="card person" data-id="${person._id}">
-              <div class="card-content light-green-text text-darken-4">
-                <span class="card-title">${person.name}</span>
-                <p class="dob">${dt}</p>
-              </div>
-              <div class="fab-anchor">
-                <a class="btn-floating halfway-fab red del-person"
-                  ><i class="material-icons del-person">delete</i></a
-                >
-              </div>
-              <div class="card-action light-green darken-4">
-                <a href="/gifts.html" class="view-gifts white-text"
-                  ><i class="material-icons">playlist_add</i> View Gifts</a
-                >
-              </div>
-            </div>`;
+          return `
+      <div class="card person" data-id="${person._id}">
+      <div class="card-content light-green-text text-darken-4">
+        <span class="card-title">${person.name}</span>
+        <p class="dob">${dt}</p>
+      </div>
+      <div class="fab-anchor">
+        <a class="btn-floating halfway-fab red del-person"
+          ><i class="material-icons del-person">delete</i></a
+        >
+      </div>
+      <div class="card-action light-green darken-4">
+        <a href="/gifts.html" class="view-gifts white-text"
+          ><i class="material-icons">playlist_add</i> View Gifts</a
+        >
+      </div>
+    </div>`;
         }).join("\n");
+        container.prepend(listOwner);
       }
     } else {
       //TODO: error message
@@ -518,7 +532,8 @@ const APP = {
         container.innerHTML = "No gift idea on the list.";
       } else {
         //TODO: display message if there are no gifts
-
+        let listOwner = document.createElement("p");
+        listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
         console.log(APP.GIFTS);
         container.innerHTML = APP.GIFTS.map((gift) => {
           //TODO: add handling for null and undefined or missing values
@@ -559,6 +574,7 @@ const APP = {
               </div>
             </div>`;
         }).join("\n");
+        container.prepend(listOwner);
       }
     } else {
       //TODO: error message
