@@ -386,8 +386,8 @@ const APP = {
         .then((data) => {
           console.log("Added person", data);
           console.log("saved..", data.data);
-          APP.PEOPLE.push(data.data);
-          APP.buildPeopleList();
+          // APP.PEOPLE.push(data.data);
+          APP.getPeople();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
@@ -408,7 +408,6 @@ const APP = {
     //TODO: provide error messages to user about invalid prices and urls
     if (name.trim() && !isNaN(price) && storeName.trim()) {
       let gift = {
-        _id: Date.now(),
         name,
         price,
         store: {
@@ -443,9 +442,10 @@ const APP = {
         )
         .then((data) => {
           console.log("Added gift", data);
+          // APP.GIFTS.push(data.data.gifts);
+          console.log("just added", APP.GIFTS);
           APP.PNAME = data.data.name;
-          APP.GIFTS.push(data.data.gifts);
-          APP.buildGiftList();
+          APP.getGifts();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
@@ -507,6 +507,8 @@ const APP = {
         container.innerHTML = "No gift idea on the list.";
       } else {
         //TODO: display message if there are no gifts
+
+        console.log(APP.GIFTS);
         container.innerHTML = APP.GIFTS.map((gift) => {
           //TODO: add handling for null and undefined or missing values
           //TODO: check for a valid URL before setting an href
