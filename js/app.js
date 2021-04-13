@@ -508,6 +508,8 @@ const APP = {
   buildGiftList: () => {
     let container = document.querySelector("section.row.gifts>div");
     if (container) {
+      let btnBackPeoplePage = document.querySelector("#btnBackPeoplePage");
+      btnBackPeoplePage.href = `/people.html?owner=${APP.owner}`;
       let a = document.querySelector(".person-name a");
       a.textContent = APP.PNAME;
       a.href = `/people.html?owner=${APP.owner}`;
