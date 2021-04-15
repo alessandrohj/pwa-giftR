@@ -321,7 +321,11 @@ const APP = {
           throw new Error(resp.statusText);
         })
         .then((data) => {
-          APP.GIFTS = APP.GIFTS.filter((gift) => gift._id != id);
+          console.log(data);
+          console.log(APP.GIFTS);
+          APP.GIFTS = APP.GIFTS.filter((gift) => {
+            return gift._id != id;
+          });
           APP.buildGiftList();
         })
         .catch((err) => console.warn(err));
@@ -430,10 +434,10 @@ const APP = {
     let price = document.getElementById("price").value;
     let storeName = document.getElementById("storeName").value;
     let storeProductURL = document.getElementById("storeProductURL").value;
-    //TODO: make all 4 fields required
+    //TODO: make all 4 fields required_DONE
     //TODO: check for valid URL if provided
     //TODO: provide error messages to user about invalid prices and urls
-    if (name.trim() && !isNaN(price) && storeName.trim()) {
+    if (name.trim() && !isNaN(price) && storeName.trim() && storeProductURL.trim()) {
       let gift = {
         name,
         price,
@@ -442,6 +446,7 @@ const APP = {
           productURL: storeProductURL,
         },
       };
+      console.log("gift", gift);
       //add the gift to the current person
       //TODO: Actually send this to the API instead of just updating the array
       let url = APP.baseURL + "api/people/" + APP.PID + "/gifts";
@@ -469,10 +474,11 @@ const APP = {
         )
         .then((data) => {
           console.log("Added gift", data);
-          // APP.GIFTS.push(data.data.gifts);
-          console.log("just added", APP.GIFTS);
+          let idx = data.data.gifts.length;
+          APP.GIFTS.push(data.data.gifts[idx - 1]);
+          console.log("after pushed gifts to gift", APP.GIFTS);
           APP.PNAME = data.data.name;
-          APP.getGifts();
+          APP.buildGiftList();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
@@ -533,37 +539,47 @@ const APP = {
     }
   },
   buildGiftList: () => {
-    let container = document.querySelector("section.row.gifts>div");
-    if (container) {
+    let div = document.querySelector("section.row.gifts>div");
+    div.innerHTML = "";
+    let df = document.createDocumentFragment();
+    if (div) {
       let btnBackPeoplePage = document.querySelector("#btnBackPeoplePage");
-      btnBackPeoplePage.href = `/people.html?owner=${APP.owner}`;
+      // btnBackPeoplePage.href = `/people.html?owner=${APP.owner}`;
+      btnBackPeoplePage.addEventListener("click", (ev) => {
+        location.href = `/people.html?owner=${APP.owner}`;
+      });
       let a = document.querySelector(".person-name a");
       a.textContent = APP.PNAME;
       a.href = `/people.html?owner=${APP.owner}`;
+
       //get the name of the person to display in the title
       if (APP.GIFTS.length == 0) {
-        container.innerHTML = "No gift idea on the list.";
+        div.innerHTML = "No gift idea on the list.";
       } else {
         //TODO: display message if there are no gifts
         let listOwner = document.createElement("p");
         listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
         console.log(APP.GIFTS);
-        container.innerHTML = APP.GIFTS.map((gift) => {
+
+        APP.GIFTS.forEach((gift) => {
           //TODO: add handling for null and undefined or missing values
           //TODO: check for a valid URL before setting an href
+          let gift_card = document.createElement("div");
+
           console.log(gift);
           let url = gift.store.productURL;
-          try {
-            url = new URL(url);
-            urlStr = url;
-          } catch (err) {
-            if (err.name == "TypeError") {
-              //not a valid url
-              url = "";
-              urlStr = "No valid URL provided";
-            }
-          }
-          return `<div class="card gift" data-id="${gift._id}">
+          let urlStr = url;
+          // try {
+          // url = new URL(url);
+          // urlStr = url;
+          // } catch (err) {
+          // if (err.name == "TypeError") {
+          // not a valid url
+          // url = "";
+          // urlStr = "No valid URL provided";
+          // }
+          // }
+          gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
               <div class="card-content light-green-text text-darken-4">
                 <h5 class="card-title idea">
                   <i class="material-icons">lightbulb</i> ${gift.name}
@@ -586,8 +602,10 @@ const APP = {
                 >
               </div>
             </div>`;
-        }).join("\n");
-        container.prepend(listOwner);
+          df.append(gift_card);
+        });
+        div.prepend(listOwner);
+        div.append(df);
       }
     } else {
       //TODO: error message
