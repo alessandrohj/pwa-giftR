@@ -354,7 +354,7 @@ const APP = {
           console.log(data);
 
           APP.PEOPLE = APP.PEOPLE.filter((person) => {
-            return person._id != data.dada._id;
+            return person._id != data.data._id;
           });
           console.log("after filter", APP.PEOPLE);
           APP.buildPeopleList();
