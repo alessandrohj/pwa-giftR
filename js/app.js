@@ -13,23 +13,23 @@ const APP = {
   init() {
     console.log("init");
     //register service worker
-    // if ("serviceWorker" in navigator) {
-    //   navigator.serviceWorker.register("./sw.js").then(
-    //     (registration) => {
-    //       APP.SW = registration.installing || registration.waiting || registration.active;
-    //     },
-    //     (error) => {
-    //       console.log("Service worker registration failed:", error);
-    //     }
-    //   );
-    //   navigator.serviceWorker.addEventListener("controllerchange", async () => {
-    //     APP.SW = navigator.serviceWorker.controller;
-    //   });
-    //   navigator.serviceWorker.addEventListener("message", APP.onMessage);
-    // } else {
-    //   console.log("Service workers are not supported.");
-    // }
-    //run the pageLoaded function
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then(
+        (registration) => {
+          APP.SW = registration.installing || registration.waiting || registration.active;
+        },
+        (error) => {
+          console.log("Service worker registration failed:", error);
+        }
+      );
+      navigator.serviceWorker.addEventListener("controllerchange", async () => {
+        APP.SW = navigator.serviceWorker.controller;
+      });
+      navigator.serviceWorker.addEventListener("message", APP.onMessage);
+    } else {
+      console.log("Service workers are not supported.");
+    }
+    // run the pageLoaded function
     APP.pageLoaded();
 
     //add UI listeners
@@ -350,7 +350,13 @@ const APP = {
           throw new Error(resp.statusText);
         })
         .then((data) => {
-          APP.PEOPLE = APP.PEOPLE.filter((person) => person._id != id);
+          console.log(APP.PEOPLE);
+          console.log(data);
+
+          APP.PEOPLE = APP.PEOPLE.filter((person) => {
+            return person._id != data.dada._id;
+          });
+          console.log("after filter", APP.PEOPLE);
           APP.buildPeopleList();
         })
         .catch((err) => console.warn(err));
@@ -406,8 +412,9 @@ const APP = {
         .then((data) => {
           console.log("Added person", data);
           console.log("saved..", data.data);
-          // APP.PEOPLE.push(data.data);
-          APP.getPeople();
+          APP.PEOPLE.push(data.data);
+          console.log(APP.PEOPLE);
+          APP.buildPeopleList();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
@@ -484,36 +491,42 @@ const APP = {
   },
   buildPeopleList: () => {
     //build the list of cards inside the current page's container
-    let container = document.querySelector("section.row.people>div");
-    if (container) {
+    let div = document.querySelector("section.row.people>div");
+    div.innerHTML = "";
+    let df = document.createDocumentFragment();
+    if (div) {
       //TODO: add handling for null and undefined or missing values
       //TODO: display message if there are no people
       if (APP.PEOPLE.length == 0) {
-        container.innerHTML = "No people on the list.";
+        div.innerHTML = "No people on the list.";
       } else {
         let listOwner = document.createElement("p");
         listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
-        container.innerHTML = APP.PEOPLE.map((person) => {
+        // container.innerHTML = APP.PEOPLE.map((person) => {
+        console.log("buildpeoplelist", APP.PEOPLE);
+        APP.PEOPLE.forEach((person) => {
           let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
-          return `
-      <div class="card person" data-id="${person._id}">
-      <div class="card-content light-green-text text-darken-4">
-        <span class="card-title">${person.name}</span>
-        <p class="dob">${dt}</p>
-      </div>
-      <div class="fab-anchor">
-        <a class="btn-floating halfway-fab red del-person"
-          ><i class="material-icons del-person">delete</i></a
-        >
-      </div>
-      <div class="card-action light-green darken-4">
-        <a href="/gifts.html" class="view-gifts white-text"
-          ><i class="material-icons">playlist_add</i> View Gifts</a
-        >
-      </div>
-    </div>`;
-        }).join("\n");
-        container.prepend(listOwner);
+          let people_card = document.createElement("div");
+          people_card.innerHTML = `<div class="card person" data-id="${person._id}">
+            <div class="card-content light-green-text text-darken-4">
+              <span class="card-title">${person.name}</span>
+              <p class="dob">${dt}</p>
+            </div>
+            <div class="fab-anchor">
+              <a class="btn-floating halfway-fab red del-person"
+                ><i class="material-icons del-person">delete</i></a
+              >
+            </div>
+            <div class="card-action light-green darken-4">
+              <a href="/gifts.html" class="view-gifts white-text"
+                ><i class="material-icons">playlist_add</i> View Gifts</a
+              >
+            </div>
+          </div>`;
+          df.append(people_card);
+        });
+        div.prepend(listOwner);
+        div.append(df);
       }
     } else {
       //TODO: error message
@@ -605,7 +618,9 @@ const APP = {
       )
       .then((data) => {
         //TODO: filter this on the serverside NOT here
+        console.log(data);
         APP.PEOPLE = data.data;
+        console.log("new app.people", APP.PEOPLE);
         APP.buildPeopleList();
       })
       .catch((err) => {
