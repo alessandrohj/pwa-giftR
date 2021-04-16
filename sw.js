@@ -80,27 +80,20 @@ self.addEventListener("activate", (ev) => {
 // );
 // });
 
-self.addEventListener("fetch", (ev) => {
-  //fetch event - web page is asking for an asset
-  ev.respondWith(
-    caches
-      .match(ev.request)
-      .then((response) => {
-        return (
-          response ||
-          fetch(ev.request).then((fetchedResponse) => {
-            return caches.open(dynamicName).then((cache) => {
-              cache.put(ev.request.url, fetchedResponse.clone());
-              limitCacheSize(dynamicName, cacheSize);
-              return fetchedResponse;
-            });
-          })
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-  );
+self.addEventListener('fetch', (ev) => {
+  ev.respondWith(async function() {
+    const cache = await caches.open(dynamicName);
+    const cachedResponse = await caches.match(ev.request);
+    const networkResponsePromise = fetch(ev.request);
+
+    ev.waitUntil(async function() {
+      const networkResponse = await networkResponsePromise;
+      await cache.put(ev.request, networkResponse.clone());
+    }());
+
+    // Returned the cached response if we have one, otherwise return the network response.
+    return cachedResponse || networkResponsePromise;
+  }());
 });
 
 const handleFetchResponse = (fetchResponse, request) => {
