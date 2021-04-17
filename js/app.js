@@ -228,7 +228,6 @@ const APP = {
       })
       .then((data) => {
         console.log("This is the token", data["data"].token);
-        APP.token = data["data"].token;
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
@@ -237,7 +236,7 @@ const APP = {
       })
       .catch((err) => console.warn(err));
   },
-  validateToken: (token) => {
+  validateToken: () => {
     let url = APP.baseURL + "auth/users/me";
     let options = {
       method: "GET",
