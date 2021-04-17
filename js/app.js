@@ -272,7 +272,7 @@ const APP = {
       })
       .catch((err) => {
         //TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);;
       });
   },
   registerUser: (payload) => {
@@ -291,8 +291,7 @@ const APP = {
       .then((response) => {
         if (response.ok) return response.json();
       })
-      .then((data) => {
-        console.log(payload);
+      .then(() => {
         APP.getToken(payload.emailAddress, payload.pass);
       })
       .catch((err) => console.warn(err));
@@ -422,7 +421,7 @@ const APP = {
         })
         .catch((err) => {
           //TODO: global error handler function
-          console.warn({ err });
+          APP.handleError(err);
         });
     }
   },
@@ -468,7 +467,7 @@ const APP = {
           },
           (err) => {
             //failed to fetch user
-            console.warn({ err });
+            APP.handleError(err);
           }
         )
         .then((data) => {
@@ -482,7 +481,7 @@ const APP = {
         })
         .catch((err) => {
           //TODO: global error handler function
-          console.warn({ err });
+          APP.handleError(err);
         });
     }
   },
@@ -535,6 +534,7 @@ const APP = {
       }
     } else {
       //TODO: error message
+      APP.handleError();
     }
   },
   buildGiftList: () => {
@@ -608,6 +608,7 @@ const APP = {
       }
     } else {
       //TODO: error message
+      APP.handleError();
     }
   },
   getPeople() {
@@ -630,7 +631,7 @@ const APP = {
           throw new Error(resp.statusText);
         },
         (err) => {
-          console.warn({ err });
+          APP.handleError(err);
         }
       )
       .then((data) => {
@@ -642,7 +643,7 @@ const APP = {
       })
       .catch((err) => {
         //TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);
       });
   },
   getGifts() {
@@ -668,7 +669,7 @@ const APP = {
           throw new Error(resp.statusText);
         },
         (err) => {
-          console.warn({ err });
+          APP.handleError(err);
         }
       )
       .then((data) => {
@@ -685,9 +686,13 @@ const APP = {
       })
       .catch((err) => {
         // TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);
       });
   },
+  handleError: (err)=>{
+    console.warn(err);
+    window.alert("Oops! Looks like there's an issue with this page. Try to refresh it!", "\n Error message: ", err)
+  }
 };
 
 document.addEventListener("DOMContentLoaded", APP.init);
