@@ -4,13 +4,16 @@ const version = 2;
 let staticName = `pre-v${version}`;
 let dynamicName = `dynamic-v${version}`;
 let cacheSize = 65;
-let staticList = ["/", "/index.html", "/gifts.html", "/people.html", "/404.html", "/css/main.css", "/js/app.js", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
+let staticList = ["/", "/index.html", "/gifts.html", "/people.html", "/404.html", "/css/main.css", "/js/app.js", "/manifest.json", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
+
 let dynamicList = [];
+
 let options = {
   ignoreSearch: false,
   ignoreMethod: false,
   ignoreVary: false,
 };
+
 self.addEventListener("install", (ev) => {
   //install event - browser has installed this version
   console.log("Service Worker has been installed", version, ev);
@@ -80,6 +83,7 @@ self.addEventListener("activate", (ev) => {
 // );
 // });
 
+
 self.addEventListener('fetch', (ev) => {
   ev.respondWith(async function() {
     const cachedResponse = await caches.match(ev.request);
@@ -88,14 +92,15 @@ self.addEventListener('fetch', (ev) => {
     ev.waitUntil(async function() {
       const cache = await caches.open(dynamicName);
       const networkResponse = await networkResponsePromise;
-      if(ev.request.method != "DELETE" && ev.request.method != "POST")
-        await cache.put(ev.request, networkResponse.clone());
+      if(ev.request.url != staticName){
+        await cache.put(ev.request, networkResponse.clone())};
     }());
 
-    // Returned the cached response if we have one, otherwise return the network response.
-    return cachedResponse || networkResponsePromise;
+    // Return network response first and fallback on Cache or 404 page if offline
+    return networkResponsePromise || cachedResponse || caches.match('404.html');
   }());
 });
+
 
 const handleFetchResponse = (fetchResponse, request) => {
   let type = fetchResponse.headers.get("content-type");
