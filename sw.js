@@ -57,38 +57,14 @@ self.addEventListener("activate", (ev) => {
     })
   );
 });
-// self.addEventListener("fetch", (ev) => {
-// ev.respondWith(
-// caches.match(ev.request).then((cacheRes) => {
-// return (
-// cacheRes ||
-// Promise.resolve()
-// .then(() => {
-// return fetch(ev.request.url).then((fetchResponse) => {
-// if (fetchResponse.ok) {
-// return handleFetchResponse(fetchResponse, ev.request);
-// }
-// });
-// })
-// .catch(() => {
-// if (ev.request.url.indexOf(".html") > 0) {
-// return caches.match("/404.html");
-// }
-// if (ev.request.url.indexOf(".jpg") || ev.request.url.indexOf(".png") > 0) {
-// return caches.match("/img/default_img.jpg");
-// }
-// })
-// );
-// })
-// );
-// });
 
 self.addEventListener("fetch", (ev) => {
   ev.respondWith(
     fetch(ev.request)
       .then((fetchResponse) => {
         return caches.open(dynamicName).then((cache) => {
-          cache.put(ev.request, fetchResponse.clone()); //add fetch to cache
+          if(ev.request.method = "GET"){
+          cache.put(ev.request, fetchResponse.clone())}; //add fetch to cache
           return fetchResponse;
         });
       })
@@ -104,19 +80,6 @@ self.addEventListener("fetch", (ev) => {
       })
   );
 });
-
-const handleFetchResponse = (fetchResponse, request) => {
-  let type = fetchResponse.headers.get("content-type");
-  if ((type && type.match(/^image\//i)) || (type && type.match(/^text\/html/i))) {
-    return caches.open(dynamicName).then((cache) => {
-      cache.put(request, fetchResponse.clone());
-      limitCacheSize(dynamicName, dynamicCacheSize);
-      return fetchResponse;
-    });
-  } else {
-    return fetchResponse;
-  }
-};
 
 self.addEventListener("message", ({ data }) => {
   //message received from a web page that uses this sw
