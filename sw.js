@@ -83,23 +83,28 @@ self.addEventListener("activate", (ev) => {
 // );
 // });
 
-
 self.addEventListener('fetch', (ev) => {
-  ev.respondWith(async function() {
-    const cachedResponse = await caches.match(ev.request);
-    const networkResponsePromise = fetch(ev.request);
-
-    ev.waitUntil(async function() {
-      const cache = await caches.open(dynamicName);
-      const networkResponse = await networkResponsePromise;
-      if(ev.request.url != staticName){
-        await cache.put(ev.request, networkResponse.clone())};
-    }());
-
-    // Return network response first and fallback on Cache or 404 page if offline
-    return networkResponsePromise || cachedResponse || caches.match('404.html');
-  }());
-});
+    ev.respondWith(
+      fetch(ev.request)
+      .then(fetchResponse=>{
+       return caches.open(dynamicName)
+          .then(cache=>{
+            cache.put(ev.request, fetchResponse.clone()) //add fetch to cache
+            return fetchResponse; 
+          })
+      })
+      // if fetch fails, fallback on cache
+      .catch(()=> {
+        return caches.match(ev.request)
+        .then((response)=>{
+          if(response === undefined) { 
+            //if no page found on cache, return offline page
+            return caches.match('404.html')}
+            return response; //else:if page exists on cache, return it
+        })
+      })
+    );
+})
 
 
 const handleFetchResponse = (fetchResponse, request) => {
