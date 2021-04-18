@@ -691,6 +691,7 @@ const APP = {
   },
   handleError: (err)=>{
     console.warn(err);
+    // removed window.alert. TODO: check if other alert should be added.
   }
 };
 
