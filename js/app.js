@@ -232,17 +232,17 @@ const APP = {
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
 
-        APP.validateToken();
+        APP.validateToken(data["data"].token);
       })
       .catch((err) => console.warn(err));
   },
-  validateToken: () => {
+  validateToken: (token) => {
     let url = APP.baseURL + "auth/users/me";
     let options = {
       method: "GET",
       headers: {
         "Content-type": "application/json",
-        Authorization: "Bearer " + APP.token,
+        Authorization: "Bearer " + token,
         "x-api-key": "deje0014",
       },
     };
