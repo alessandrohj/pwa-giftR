@@ -1,6 +1,7 @@
 const APP = {
   //TODO: update the URL to match your app's url
-  baseURL: "https://giftr.mad9124.rocks/",
+  // baseURL: "https://giftr.mad9124.rocks/",
+  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
   //TODO: update the key for session storage
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
