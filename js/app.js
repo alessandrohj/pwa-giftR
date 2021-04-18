@@ -273,7 +273,7 @@ const APP = {
       })
       .catch((err) => {
         //TODO: global error handler function
-        APP.handleError(err);;
+        APP.handleError(err);
       });
   },
   registerUser: (payload) => {
@@ -473,11 +473,12 @@ const APP = {
         )
         .then((data) => {
           console.log("Added gift", data);
-          let idx = data.data.gifts.length;
-          APP.GIFTS.push(data.data.gifts[idx - 1]);
-          console.log("after pushed gifts to gift", APP.GIFTS);
-          APP.PNAME = data.data.name;
-          APP.buildGiftList();
+          // let idx = data.data.gifts.length;
+          // APP.GIFTS.push(data.data.gifts[idx - 1]);
+          // console.log("after pushed gifts to gift", APP.GIFTS);
+          // APP.PNAME = data.data.name;
+          // APP.buildGiftList();
+          APP.getGifts();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
@@ -690,10 +691,10 @@ const APP = {
         APP.handleError(err);
       });
   },
-  handleError: (err)=>{
+  handleError: (err) => {
     console.warn(err);
     // removed window.alert. TODO: check if other alert should be added.
-  }
+  },
 };
 
 document.addEventListener("DOMContentLoaded", APP.init);
