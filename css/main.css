@@ -103,3 +103,8 @@ input[type="url"]:not(.browser-default) {
   margin-bottom: 1rem;
   font-weight: 300;
 }
+
+#offlineImage{
+  padding-top: 2rem;
+  max-width: 22.5rem;
+}
