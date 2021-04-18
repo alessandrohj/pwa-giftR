@@ -228,7 +228,6 @@ const APP = {
       })
       .then((data) => {
         console.log("This is the token", data["data"].token);
-        APP.token = data["data"].token;
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
@@ -237,7 +236,7 @@ const APP = {
       })
       .catch((err) => console.warn(err));
   },
-  validateToken: (token) => {
+  validateToken: () => {
     let url = APP.baseURL + "auth/users/me";
     let options = {
       method: "GET",
@@ -273,7 +272,7 @@ const APP = {
       })
       .catch((err) => {
         //TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);;
       });
   },
   registerUser: (payload) => {
@@ -292,8 +291,7 @@ const APP = {
       .then((response) => {
         if (response.ok) return response.json();
       })
-      .then((data) => {
-        console.log(payload);
+      .then(() => {
         APP.getToken(payload.emailAddress, payload.pass);
       })
       .catch((err) => console.warn(err));
@@ -423,7 +421,7 @@ const APP = {
         })
         .catch((err) => {
           //TODO: global error handler function
-          console.warn({ err });
+          APP.handleError(err);
         });
     }
   },
@@ -469,7 +467,7 @@ const APP = {
           },
           (err) => {
             //failed to fetch user
-            console.warn({ err });
+            APP.handleError(err);
           }
         )
         .then((data) => {
@@ -483,7 +481,7 @@ const APP = {
         })
         .catch((err) => {
           //TODO: global error handler function
-          console.warn({ err });
+          APP.handleError(err);
         });
     }
   },
@@ -536,6 +534,7 @@ const APP = {
       }
     } else {
       //TODO: error message
+      APP.handleError();
     }
   },
   buildGiftList: () => {
@@ -609,6 +608,7 @@ const APP = {
       }
     } else {
       //TODO: error message
+      APP.handleError();
     }
   },
   getPeople() {
@@ -631,7 +631,7 @@ const APP = {
           throw new Error(resp.statusText);
         },
         (err) => {
-          console.warn({ err });
+          APP.handleError(err);
         }
       )
       .then((data) => {
@@ -643,7 +643,7 @@ const APP = {
       })
       .catch((err) => {
         //TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);
       });
   },
   getGifts() {
@@ -669,7 +669,7 @@ const APP = {
           throw new Error(resp.statusText);
         },
         (err) => {
-          console.warn({ err });
+          APP.handleError(err);
         }
       )
       .then((data) => {
@@ -686,9 +686,13 @@ const APP = {
       })
       .catch((err) => {
         // TODO: global error handler function
-        console.warn({ err });
+        APP.handleError(err);
       });
   },
+  handleError: (err)=>{
+    console.warn(err);
+    window.alert("Oops! Looks like there's an issue with this page. Try to refresh it!", "\n Error message: ", err)
+  }
 };
 
 document.addEventListener("DOMContentLoaded", APP.init);
