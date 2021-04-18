@@ -691,7 +691,6 @@ const APP = {
   },
   handleError: (err)=>{
     console.warn(err);
-    window.alert("Oops! Looks like there's an issue with this page. Try to refresh it!", "\n Error message: ", err)
   }
 };
 
