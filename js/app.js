@@ -504,26 +504,26 @@ const APP = {
       //TODO: add handling for null and undefined or missing values
       //TODO: display message if there are no people
       if (APP.PEOPLE.length == 0) {
-        div.innerHTML = "No people on the list.";
+        div.innerHTML = `<p class="white-text center ownerIntro">No people on the list.`;
       } else {
         let listOwner = document.createElement("p");
-        listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
+        listOwner.innerHTML = `<p class="white-text center ownerIntro">Owner : ${APP.ownerName}</p>`;
         // container.innerHTML = APP.PEOPLE.map((person) => {
         console.log("buildpeoplelist", APP.PEOPLE);
         APP.PEOPLE.forEach((person) => {
           let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
           let people_card = document.createElement("div");
           people_card.innerHTML = `<div class="card person" data-id="${person._id}">
-            <div class="card-content light-green-text text-darken-4">
+            <div class="card-content blue-grey-text text-darken-4">
               <span class="card-title">${person.name}</span>
               <p class="dob">${dt}</p>
             </div>
             <div class="fab-anchor">
-              <a class="btn-floating halfway-fab red del-person"
+              <a class="btn-floating halfway-fab red accent-4 del-person"
                 ><i class="material-icons del-person">delete</i></a
               >
             </div>
-            <div class="card-action light-green darken-4">
+            <div class="card-action blue-grey darken-4">
               <a href="/gifts.html" class="view-gifts white-text"
                 ><i class="material-icons">playlist_add</i> View Gifts</a
               >
@@ -549,17 +549,19 @@ const APP = {
       btnBackPeoplePage.addEventListener("click", (ev) => {
         location.href = `/people.html?owner=${APP.owner}`;
       });
-      let a = document.querySelector(".person-name a");
-      a.textContent = APP.PNAME;
-      a.href = `/people.html?owner=${APP.owner}`;
+      // let idea = document.querySelector(".person-name");
 
       //get the name of the person to display in the title
       if (APP.GIFTS.length == 0) {
-        div.innerHTML = "No gift idea on the list.";
+        div.innerHTML = `<p class="white-text center ownerIntro">No gift idea on the list.</p>`;
       } else {
-        //TODO: display message if there are no gifts
+        let giftIdea = document.createElement("div");
+        giftIdea.innerHTML = `<div class="blue-grey-text text-darken-4 person-name center giftFor">
+        Ideas for <span class="blue-grey-text text-darken-4">${APP.PNAME}</span></a>
+        </div>`;
+
         let listOwner = document.createElement("p");
-        listOwner.innerHTML = `<p>Owned by ${APP.ownerName}</p>`;
+        listOwner.innerHTML = `<p class="white-text center giftOwner">Owner : <b>${APP.ownerName}</b></p>`;
         console.log(APP.GIFTS);
 
         APP.GIFTS.forEach((gift) => {
@@ -581,31 +583,27 @@ const APP = {
           // }
           // }
           gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
-              <div class="card-content light-green-text text-darken-4">
+              <div class="card-content blue-grey-text text-darken-4">
                 <h5 class="card-title idea">
                   <i class="material-icons">lightbulb</i> ${gift.name}
                 </h5>
                 <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
-                
                 <h6 class="store">
                   <i class="material-icons">room</i>${gift.store.name}</h6>
                 </h6>
                 <h6 class="link">
                   <i class="material-icons">link</i>
-                  <a href="${url}" class="" target="_blank"
-                    >${urlStr}</a
-                  >
+                  <a href="${url}" class="" target="_blank">${urlStr}</a>
                 </h6>
               </div>
               <div class="fab-anchor">
-                <a class="btn-floating halfway-fab red del-gift"
-                  ><i class="material-icons del-gift">delete</i></a
-                >
+                <a class="btn-floating halfway-fab red accent-4 del-gift"><i class="material-icons del-gift">delete</i></a>
               </div>
             </div>`;
           df.append(gift_card);
         });
         div.prepend(listOwner);
+        div.prepend(giftIdea);
         div.append(df);
       }
     } else {

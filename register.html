@@ -5,34 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GIFTR</title>
-    <!-- pwa manifest and android support meta and link tags-->
-    <!-- 
-      TODO: update the links to the manifest 
-      TODO: update the links in the manifest
-    -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#" />
-    <meta name="theme-color" content="#004d40" />
-    <!-- ios support link and meta tags-->
+    <meta name="apple-mobile-web-app-status-bar" content="#263238"/>    
+    <meta name="theme-color" content="#263238" />
     <link rel="apple-touch-icon" href="/img/icons/icon-96x96.png" />
     <meta name="apple-mobile-web-app-status-bar" content="#" />
-
-    <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-
-    <!-- styles materialize and main-->
     <link rel="stylesheet" href="./css/materialize.min.css" />
     <link rel="stylesheet" href="./css/main.css" />
-
-    <!-- scripts materialize and main app -->
     <script src="./js/materialize.min.js"></script>
     <script src="./js/app.js"></script>
   </head>
   <body id="register">
     <!-- nav bar -->
     <nav>
-      <div class="nav-wrapper light-green darken-4">
-        <a href="#" class="brand-logo left"> Giftr</a>
+      <div class="nav-wrapper blue-grey darken-4">
+        <a href="#" class="brand-logo center"> Giftr</a>
         <ul id="nav-mobile" class="right"></ul>
       </div>
     </nav>
@@ -40,23 +28,23 @@
     <!-- login and register -->
     <main class="container">
       <div class="row">
-        <form class="col s12">
+        <form class="col s12 center">
           <div class="row">
               <div class="input-field col s12 black-text">
-                  <input id="firstName" type="text" class="validate black-text" />
-                  <label for="firstName" class="black-text">First Name</label>
+                  <input id="firstName" type="text" class="validate white-text" />
+                  <label for="firstName" class="white-text">First Name</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s12 black-text">
-                    <input id="lastName" type="text" class="validate black-text" />
-                    <label for="lastName" class="black-text">Last Name</label>
+                    <input id="lastName" type="text" class="validate white-text" />
+                    <label for="lastName" class="white-text">Last Name</label>
                 </div>
             </div>
             <div class="row">
               <div class="input-field col s12 black-text">
-                <input id="email" type="email" class="validate black-text" />
-                <label for="email" class="black-text">Email</label>
+                <input id="email" type="email" class="validate white-text" />
+                <label for="email" class="white-text">Email</label>
               </div>
             </div>
           <div class="row">
@@ -64,15 +52,15 @@
               <input
                 id="password"
                 type="password"
-                class="validate black-text"
+                class="validate white-text"
               />
-              <label for="password" class="black-text">Password</label>
+              <label for="password" class="white-text">Password</label>
             </div>
           </div>
-          <div class="row">
-            <div class="col s6">
+          <div class="row ">
+            <div class="col s12 center">
               <a
-                class="waves-effect waves-light btn light-green darken-2"
+                class="waves-effect waves-light btn blue-grey darken-3"
                 id="btnRegister"
                 ><i class="material-icons left">person_add</i>Register</a
               >

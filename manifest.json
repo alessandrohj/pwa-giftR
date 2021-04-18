@@ -1,8 +1,8 @@
 {
   "name": "giftR",
   "short_name": "giftR",
-  "theme_color": "#004d40",
-  "background_color": "#004d40",
+  "theme_color": "#263238",
+  "background_color": "#263238",
   "display": "standalone",
   "Scope": "/",
   "start_url": "/",

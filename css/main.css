@@ -3,15 +3,23 @@ body {
   width: 100vw;
   padding: 0;
   margin: 0;
-  background-color: #ccff90;
+  /* background-color: #89979ede; */
+  background-color: #888a94;
+  /* background-color: #8bc5ec70; */
+  /* background-image: linear-gradient(256deg, #8bc6ec 0%, #9599e2 100%); */
 }
 .fab-anchor {
   position: relative;
   line-height: 0;
 }
-.brand-logo {
-  margin-left: 2rem;
+input[type="email"]:not(.browser-default),
+input[type="password"]:not(.browser-default),
+input[type="text"]:not(.browser-default),
+input[type="date"]:not(.browser-default),
+input[type="url"]:not(.browser-default) {
+  border-bottom: 1px solid #fff;
 }
+
 .card.gift {
   margin-bottom: 3rem;
   position: relative;
@@ -22,10 +30,19 @@ body {
   font-family: "Material Icons";
   top: 0;
   right: 0;
-  color: hsla(100, 50%, 20%, 0.08);
+  color: hsla(189, 72%, 17%, 0.708);
   font-size: 10rem;
   line-height: 1;
   /* margin-right: -4rem; */
+}
+.person,
+.gift {
+  box-shadow: 0 3px 3px rgba(255, 248, 248, 0.815);
+}
+.ownerIntro {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 300;
 }
 .card.person {
   position: relative;
@@ -45,6 +62,10 @@ body {
 .person .card-content {
   padding-left: 4rem;
 }
+.person-name a {
+  color: #eceff1;
+  font-weight: 300;
+}
 .container form {
   margin-top: 4rem;
 }
@@ -62,5 +83,23 @@ body {
   font-size: 1.7rem;
   font-weight: bold;
   padding-top: 0.5rem;
-  margin-left: -0.3rem;
+  margin-left: -0.4rem;
+}
+.sidenav {
+  /* background-color: #b0bec5; */
+  background-color: #dce4e9;
+}
+.sidenav li {
+  /* margin-top: 1rem; */
+  border-bottom: 2px solid #b0bec5;
+  height: 50px;
+}
+.giftFor {
+  font-size: 1.8rem;
+}
+.giftOwner {
+  margin-top: -0.5rem;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
 }
