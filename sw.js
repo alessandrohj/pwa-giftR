@@ -1,23 +1,11 @@
-//service worker for pwa4
-//TODO: Add the 7ode for all the events and make this work offline
 const version = 1;
 let staticName = `pre-v${version}`;
 let dynamicName = `dynamic-v${version}`;
 let cacheSize = 65;
-let staticList = ["/", "/index.html", "/gifts.html", "/people.html", "/404.html", "/css/main.css", "/js/app.js", "/manifest.json", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
-
+let staticList = ["/", "/index.html", "/pages/gifts.html", "/pages/register.html", "pages/forgotPwd.html", "/pages/people.html", "/pages/404.html", "/css/main.css", "/js/app.js", "/manifest.json", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/offline.png", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
 let dynamicList = [];
-
-let options = {
-  ignoreSearch: false,
-  ignoreMethod: false,
-  ignoreVary: false,
-};
-
 self.addEventListener("install", (ev) => {
-  //install event - browser has installed this version
   console.log("Service Worker has been installed", version, ev);
-  //build cache
   ev.waitUntil(
     caches
       .open(staticName)
@@ -26,7 +14,7 @@ self.addEventListener("install", (ev) => {
       })
       .then(
         () => {
-          // return self.skipWaiting();
+          return self.skipWaiting();
         },
         (err) => {
           console.warn(`${err} - failed to update ${staticName}.`);
@@ -34,11 +22,8 @@ self.addEventListener("install", (ev) => {
       )
   );
 });
-
 self.addEventListener("activate", (ev) => {
-  //activate event - browser now using this version
   console.log("SW activated");
-  // delete old versions of caches.
   ev.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -57,48 +42,40 @@ self.addEventListener("activate", (ev) => {
     })
   );
 });
-
 self.addEventListener("fetch", (ev) => {
   ev.respondWith(
     fetch(ev.request)
       .then((fetchResponse) => {
         return caches.open(dynamicName).then((cache) => {
-          if(ev.request.method = "GET"){
-          cache.put(ev.request, fetchResponse.clone())}; //add fetch to cache
+          if ((ev.request.method = "GET")) {
+            cache.put(ev.request, fetchResponse.clone());
+          }
           return fetchResponse;
         });
       })
-      // if fetch fails, fallback on cache
       .catch(() => {
         return caches.match(ev.request).then((response) => {
           if (response === undefined) {
-            //if no page found on cache, return offline page
-            return caches.match("404.html");
+            return caches.match("/pages/404.html");
           }
-          return response; //else:if page exists on cache, return it
+          return response;
         });
       })
   );
 });
-
 self.addEventListener("message", ({ data }) => {
-  //message received from a web page that uses this sw
   console.log("Message received from page", data);
 });
-
 const sendMessage = async (msg) => {
-  //send a message from the service worker to the webpage(s)
   let allClients = await clients.matchAll({ includeUncontrolled: true });
   return Promise.all(
     allClients.map((client) => {
       let channel = new MessageChannel();
       channel.port1.onmessage = onMessage;
-      //port1 for send port2 for receive
       return client.postMessage(msg, [channel.port2]);
     })
   );
 };
-
 const limitCacheSize = (cacheName, size) => {
   caches.open(cacheName).then((cache) => {
     cache.keys().then((keys) => {

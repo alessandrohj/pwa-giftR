@@ -1,8 +1,5 @@
 const APP = {
-  //TODO: update the URL to match your app's url
-  // baseURL: "https://giftr.mad9124.rocks/",
   baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  //TODO: update the key for session storage
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -12,8 +9,6 @@ const APP = {
   PID: null,
   PNAME: null,
   init() {
-    console.log("init");
-    //register service worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").then(
         (registration) => {
@@ -30,25 +25,15 @@ const APP = {
     } else {
       console.log("Service workers are not supported.");
     }
-    // run the pageLoaded function
     APP.pageLoaded();
-
-    //add UI listeners
     APP.addListeners();
   },
   pageLoaded() {
-    //page has just loaded and we need to check the queryString
-    //based on the querystring value(s) run the page specific tasks
     console.log("A page is loaded and checking", location.search);
     let params = new URL(document.location).searchParams;
-    //figure out what page we are on... use this when building content
     APP.page = document.body.id;
     switch (APP.page) {
       case "home":
-        //do things for the home page
-        //check for the ?out and clear out the user's session info
-        //TODO: this check for logged in should be done through API and token
-        //TODO: clear out old tokens when the user logs out
         if (params.has("out")) {
           APP.owner = null;
           APP.GIFTS = [];
@@ -58,11 +43,9 @@ const APP = {
         }
         break;
       case "people":
-        //do things for the people page
         APP.getOwner().getPeople();
         break;
       case "gifts":
-        //do things for the gifts page
         APP.PID = params.get("pid");
         APP.getOwner().getGifts();
         break;
@@ -71,68 +54,45 @@ const APP = {
   getOwner() {
     let id = sessionStorage.getItem(APP.OWNERKEY);
     let ownerName = sessionStorage.getItem("ownerName");
-
     if (id) {
       APP.owner = id;
       APP.ownerName = ownerName;
       return APP;
     } else {
-      //send the user back to the home page and log them out
-      //TODO: add the check via the API for a user being logged in and logging out
       location.href = "/index.html?out";
     }
   },
   addListeners() {
     console.log(APP.page, "adding listeners");
-
     //HOME PAGE
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
-        location.href = "/register.html";
-        //go to people page after reg & login success
-        //TODO: api call
+        location.href = "/pages/register.html";
         let email = document.getElementById("email").value;
         email = email.trim();
-        //TODO: send email and password AND username to API call
-        // if (email) {
-        //   let url = APP.baseURL + "users.json";
-        //   fetch(url)
-        //     .then(
-        //       (resp) => {
-        //         if (resp.ok) return resp.json();
-        //         throw new Error(resp.statusText);
-        //       },
-        //       (err) => {
-        //         //failed to fetch user
-        //         console.warn({ err });
-        //       }
-        //     )
-        //     .then((data) => {
-        //       //TODO: do the user validation in the API
-        //       let user = data.users.filter((user) => user.email === email);
-        //       APP.owner = user[0]._id;
-        //       sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-        //       console.log("registered... go to people page");
-        //       location.href = "/people.html";
-        //     });
-        // } else {
-        //   console.warn("No email address");
-        // }
       });
-
       let btnLogin = document.getElementById("btnLogin");
       btnLogin.addEventListener("click", (ev) => {
-        //go to people page after login success
-        //TODO: api call
         let email = document.getElementById("email").value;
         email = email.trim();
-        //TODO: send email and password AND username to API call
         let password = document.getElementById("password").value;
         if (email && password) {
-          APP.getToken(email, password); //send data to API
+          APP.getToken(email, password);
         } else {
           console.warn("No email address");
+        }
+      });
+    }
+    //FORGOTPWD PAGE
+    if (APP.page === "forgotPwd") {
+      let btnUpdatePwd = document.getElementById("btnUpdatePwd");
+      btnUpdatePwd.addEventListener("click", (ev) => {
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let payload = { emailAddress: email, pass: password };
+        if (payload) {
+          APP.updatePwd(payload);
         }
       });
     }
@@ -180,6 +140,10 @@ const APP = {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
+      });
+      let btnForgotPwd = document.querySelector("#btnForgotPwd");
+      btnForgotPwd.addEventListener("click", (ev) => {
+        location.href = "forgotPwd.html";
       });
     }
     //GIFTS PAGE
@@ -235,7 +199,7 @@ const APP = {
 
         APP.validateToken(data["data"].token);
       })
-      .catch((err) => console.warn(err));
+      .catch((err) => window.alert("Please check your email or password again"));
   },
   validateToken: (token) => {
     let url = APP.baseURL + "auth/users/me";
@@ -269,7 +233,7 @@ const APP = {
         console.log("logged in... go to people page");
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("ownerName", APP.ownerName);
-        location.href = `/people.html?owner=${APP.owner}`;
+        location.href = `/pages/people.html?owner=${APP.owner}`;
       })
       .catch((err) => {
         //TODO: global error handler function
@@ -297,7 +261,31 @@ const APP = {
       })
       .catch((err) => console.warn(err));
   },
-
+  updatePwd: (payload) => {
+    console.log(payload);
+    let url = APP.baseURL + "auth/users/me";
+    let options = {
+      method: "PATCH",
+      body: JSON.stringify({ email: payload.emailAddress, password: payload.pass }),
+      headers: {
+        "Content-type": "application/json",
+        "x-api-key": "deje0014",
+        Authorization: "Bearer " + APP.token,
+      },
+    };
+    fetch(url, options)
+      .then((response) => {
+        if (response.ok) return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        APP.getToken(payload.emailAddress, payload.pass);
+        // sessionStorage.removeItem("token");
+        // sessionStorage.removeItem("ownerName");
+        // sessionStorage.removeItem(APP.OWNERKEY);
+      })
+      .catch((err) => console.warn(err));
+  },
   delGift(ev) {
     ev.preventDefault();
     console.log(ev.target);
@@ -369,7 +357,7 @@ const APP = {
       //go see the gifts for this person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       //we can pass person_id by sessionStorage or queryString or history.state ?
-      let url = `/gifts.html?owner=${APP.owner}&pid=${id}`;
+      let url = `/pages/gifts.html?owner=${APP.owner}&pid=${id}`;
       location.href = url;
     }
   },
@@ -496,7 +484,6 @@ const APP = {
     //message received from service worker
   },
   buildPeopleList: () => {
-    //build the list of cards inside the current page's container
     let div = document.querySelector("section.row.people>div");
     div.innerHTML = "";
     let df = document.createDocumentFragment();
@@ -504,12 +491,10 @@ const APP = {
       //TODO: add handling for null and undefined or missing values
       //TODO: display message if there are no people
       if (APP.PEOPLE.length == 0) {
-        div.innerHTML = `<p class="white-text center ownerIntro">No people on the list.`;
+        div.innerHTML = `<p class="white-text center ownerIntro">No people on the list. <br> Start to add people on your list!</p>`;
       } else {
         let listOwner = document.createElement("p");
-        listOwner.innerHTML = `<p class="white-text center ownerIntro">Owner : ${APP.ownerName}</p>`;
-        // container.innerHTML = APP.PEOPLE.map((person) => {
-        console.log("buildpeoplelist", APP.PEOPLE);
+        listOwner.innerHTML = `<p class="white-text center ownerIntro">Owner : ${APP.ownerName}</.>`;
         APP.PEOPLE.forEach((person) => {
           let dt = new Date(person.birthDate).toLocaleDateString("en-CA");
           let people_card = document.createElement("div");
@@ -520,13 +505,11 @@ const APP = {
             </div>
             <div class="fab-anchor">
               <a class="btn-floating halfway-fab red accent-4 del-person"
-                ><i class="material-icons del-person">delete</i></a
-              >
+                ><i class="material-icons del-person">delete</i></a>
             </div>
             <div class="card-action blue-grey darken-4">
-              <a href="/gifts.html" class="view-gifts white-text"
-                ><i class="material-icons">playlist_add</i> View Gifts</a
-              >
+              <a href="/pages/gifts.html" class="view-gifts white-text"
+                ><i class="material-icons">playlist_add</i> View Gifts</a>
             </div>
           </div>`;
           df.append(people_card);
@@ -545,13 +528,9 @@ const APP = {
     let df = document.createDocumentFragment();
     if (div) {
       let btnBackPeoplePage = document.querySelector("#btnBackPeoplePage");
-      // btnBackPeoplePage.href = `/people.html?owner=${APP.owner}`;
       btnBackPeoplePage.addEventListener("click", (ev) => {
-        location.href = `/people.html?owner=${APP.owner}`;
+        location.href = `/pages/people.html?owner=${APP.owner}`;
       });
-      // let idea = document.querySelector(".person-name");
-
-      //get the name of the person to display in the title
       if (APP.GIFTS.length == 0) {
         div.innerHTML = `<p class="white-text center ownerIntro">No gift idea on the list.</p>`;
       } else {
@@ -559,17 +538,12 @@ const APP = {
         giftIdea.innerHTML = `<div class="blue-grey-text text-darken-4 person-name center giftFor">
         Ideas for <span class="blue-grey-text text-darken-4">${APP.PNAME}</span></a>
         </div>`;
-
         let listOwner = document.createElement("p");
         listOwner.innerHTML = `<p class="white-text center giftOwner">Owner : <b>${APP.ownerName}</b></p>`;
-        console.log(APP.GIFTS);
-
         APP.GIFTS.forEach((gift) => {
           //TODO: add handling for null and undefined or missing values
           //TODO: check for a valid URL before setting an href
           let gift_card = document.createElement("div");
-
-          console.log(gift);
           let url = gift.store.productURL;
           let urlStr = url;
           // try {

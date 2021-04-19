@@ -5,24 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GIFTR</title>
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="../manifest.json" />
     <meta name="apple-mobile-web-app-status-bar" content="#263238"/>    
     <meta name="theme-color" content="#263238" />
-    <link rel="apple-touch-icon" href="/img/icons/icon-96x96.png" />
+    <link rel="apple-touch-icon" href="../img/icons/icon-96x96.png" />
     <meta name="apple-mobile-web-app-status-bar" content="#" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <link rel="stylesheet" href="./css/materialize.min.css" />
-    <link rel="stylesheet" href="./css/main.css" />
-    <script src="./js/materialize.min.js"></script>
-    <script src="./js/app.js"></script>
+    <link rel="stylesheet" href="../css/materialize.min.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <script src="../js/materialize.min.js"></script>
+    <script src="../js/app.js"></script>
   </head>
   <body id="people">
-    <!-- nav bar -->
     <nav>
       <div class="nav-wrapper blue-grey darken-4">
         <div class="brand-logo center show-on-large">Giftr</div>
         <a href="#" data-target="slide-out"class="left sidenav-trigger show-on-large"> <i class="material-icons left">menu</i></a>
-
         <ul id="nav-mobile" class="right">
           <li>
             <a href="#modalAddPerson" title="Add person" id="btnAddPerson" class="modal-trigger"><i class="material-icons right">person_add</i> Add Person</a>
@@ -30,31 +28,18 @@
         </ul>
       </div>
     </nav>
-
     <main class="container">
       <section class="row people">
         <div class="col s12">
-          <!-- person cards go here and replace this dummy data -->
-          <!-- <div class="card person" data-id=""> -->
-            <!-- <div class="card-content light-green-text text-darken-4"> -->
-              <!-- <span class="card-title">Dean Winchester</span> -->
-              <!-- <p class="dob">12/12/1985</p> -->
-            <!-- </div> -->
-            <!-- <div class="fab-anchor"> -->
-              <!-- <a class="btn-floating halfway-fab red del-person" -->
-                <!-- ><i class="material-icons">delete</i></a -->
-              <!-- > -->
-            <!-- </div> -->
-            <!-- <div class="card-action light-green darken-4"> -->
-              <!-- <a href="/gifts.html" class="view-gifts white-text" -->
-                <!-- ><i class="material-icons">playlist_add</i> View Gifts</a -->
-              <!-- > -->
-            <!-- </div> -->
-          <!-- </div> -->
         </div>
       </section>
+      <!-- forgot pwd -->
+      <div class="class row center">
+        <div class="col s12 center">
+          <a class="waves-effect waves-light btn-small grey darken-1 white-text" id="btnForgotPwd"><i  class="material-icons left">hail</i>Forgot Password</a>
+      </div>  
+      </div>
     </main>
-
     <div class="modal modal-fixed-footer" id="modalAddPerson">
       <div class="modal-content blue-grey lighten-4">
         <h4 class="blue-grey-text text-darken-4">New Person</h4>
@@ -80,12 +65,10 @@
           class="modal-close waves-effect blue-grey darken-4 btn-flat center white-text">Save Person</a>
       </div>
     </div>
-
     <ul id="slide-out" class="sidenav">
       <li id="btnLogOut">
-        <a href="/index.html" class="waves-effect"
-          ><i class="material-icons">logout</i>Logout</a
-        >
+        <a href="../index.html" class="waves-effect"
+          ><i class="material-icons">logout</i>Logout</a>
       </li>
       <li>
         <a class="sidenav-close" href="#!"><i class="material-icons">cancel</i>Close Sidenav</a>

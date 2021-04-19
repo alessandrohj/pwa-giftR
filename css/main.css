@@ -3,10 +3,7 @@ body {
   width: 100vw;
   padding: 0;
   margin: 0;
-  /* background-color: #89979ede; */
   background-color: #888a94;
-  /* background-color: #8bc5ec70; */
-  /* background-image: linear-gradient(256deg, #8bc6ec 0%, #9599e2 100%); */
 }
 .fab-anchor {
   position: relative;
@@ -19,7 +16,6 @@ input[type="date"]:not(.browser-default),
 input[type="url"]:not(.browser-default) {
   border-bottom: 1px solid #fff;
 }
-
 .card.gift {
   margin-bottom: 3rem;
   position: relative;
@@ -33,7 +29,6 @@ input[type="url"]:not(.browser-default) {
   color: hsla(189, 72%, 17%, 0.708);
   font-size: 10rem;
   line-height: 1;
-  /* margin-right: -4rem; */
 }
 .person,
 .gift {
@@ -69,7 +64,6 @@ input[type="url"]:not(.browser-default) {
 .container form {
   margin-top: 4rem;
 }
-
 #btnBackPeoplePage {
   margin-top: 2rem;
   margin-left: 1rem;
@@ -78,7 +72,6 @@ input[type="url"]:not(.browser-default) {
   border-radius: 50%;
   cursor: pointer;
 }
-
 #btnBackPeoplePage i {
   font-size: 1.7rem;
   font-weight: bold;
@@ -86,11 +79,9 @@ input[type="url"]:not(.browser-default) {
   margin-left: -0.4rem;
 }
 .sidenav {
-  /* background-color: #b0bec5; */
   background-color: #dce4e9;
 }
 .sidenav li {
-  /* margin-top: 1rem; */
   border-bottom: 2px solid #b0bec5;
   height: 50px;
 }
@@ -103,8 +94,17 @@ input[type="url"]:not(.browser-default) {
   margin-bottom: 1rem;
   font-weight: 300;
 }
-
-#offlineImage{
-  padding-top: 2rem;
+#offline {
+  width: 80vw;
+  text-align: center;
+}
+#offlineImage {
+  padding-top: 3rem;
   max-width: 22.5rem;
+}
+.offlineFeedback {
+  margin-top: 2rem;
+}
+#btnForgotPwd {
+  font-weight: 300;
 }
