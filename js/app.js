@@ -279,8 +279,8 @@ const APP = {
       })
       .then((data) => {
         console.log(data);
-        APP.getToken(payload.emailAddress, payload.pass);
-        // sessionStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        sessionStorage.setItem("token", data.token);
         // sessionStorage.removeItem("ownerName");
         // sessionStorage.removeItem(APP.OWNERKEY);
       })
