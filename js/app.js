@@ -1,6 +1,5 @@
 const APP = {
-  // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  baseURL: "http://127.0.0.1:3030/",
+  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -65,7 +64,6 @@ const APP = {
   },
   addListeners() {
     console.log(APP.page, "adding listeners");
-    //HOME PAGE
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
@@ -85,54 +83,50 @@ const APP = {
         }
       });
     }
-    //updatePWD PAGE
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
       btnUpdatePwd.addEventListener("click", (ev) => {
-        let email = document.getElementById("email").value;
+        let email = document.getElementById("email").value.trim();
         let password = document.getElementById("password").value;
-        let payload = { emailAddress: email, pass: password };
-        if (payload) {
-          APP.updatePwd(payload);
+        let passwordLength = password.trim().length;
+        if (email && passwordLength >= 1) {
+          let payload = { emailAddress: email, pass: password };
+          if (payload) {
+            APP.updatePwd(payload);
+          }
+        } else {
+          window.alert("Invalid email or password. Please check it again");
+          document.querySelector(".updateForm").reset();
         }
       });
     }
-    //REGISTER PAGE
     if (APP.page === "register") {
-      let updateNewPwd = document.getElementById("updateNewPwd");
-      updateNewPwd.addEventListener("click", (ev) => {
-        let firstName = document.getElementById("firstName").value;
-        let lastName = document.getElementById("lastName").value;
-        let email = document.getElementById("email").value;
-        let password = document.getElementById("password").value;
-        let payload = { first: firstName, last: lastName, emailAddress: email, pass: password };
-        if (payload) {
+      let btnRegister = document.getElementById("btnRegister");
+      btnRegister.addEventListener("click", (ev) => {
+        let firstName = document.getElementById("firstName").value.trim();
+        let lastName = document.getElementById("lastName").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value.trim();
+        if (firstName && lastName && email && password) {
+          let payload = { first: firstName, last: lastName, emailAddress: email, pass: password };
           APP.registerUser(payload);
+        } else {
+          window.alert("Invalid input. Please check again");
         }
       });
     }
-
-    //PEOPLE PAGE
     if (APP.page === "people") {
-      //activate the add person modal
       let elemsP = document.querySelectorAll(".modal");
       let instancesP = M.Modal.init(elemsP, { dismissable: true });
-      //activate the slide out for logout
       let elemsL = document.querySelectorAll(".sidenav");
       let instancesL = M.Sidenav.init(elemsL, {
         edge: "left",
         draggable: true,
       });
-
-      //add person listener
       let btnSave = document.getElementById("btnSavePerson");
       btnSave.addEventListener("click", APP.addPerson);
-      //TODO:
-      //delete person listener TODO: Add a confirmation for delete
-      //plus same listener for view gifts listener
       let section = document.querySelector(`section.people`);
       section.addEventListener("click", APP.delOrViewPerson);
-      //stop form submissions
       document.querySelector("#modalAddPerson form").addEventListener("submit", (ev) => {
         ev.preventDefault();
       });
@@ -147,27 +141,18 @@ const APP = {
         location.href = "updatePwd.html";
       });
     }
-    //GIFTS PAGE
     if (APP.page === "gifts") {
-      //activate the add gift modal
       let elemsG = document.querySelectorAll(".modal");
       let instancesG = M.Modal.init(elemsG, { dismissable: true });
-      //activate the slide out for logout
       let elemsL = document.querySelectorAll(".sidenav");
       let instancesL = M.Sidenav.init(elemsL, {
         edge: "left",
         draggable: true,
       });
-
-      //add gift listener
       let btnSave = document.getElementById("btnSaveGift");
-      btnSave.addEventListener("click", APP.
-                              );
-      //TODO:
-      //delete gift listener TODO: Add confirmation for delete
+      btnSave.addEventListener("click", APP.addGift);
       let section = document.querySelector(`section.gifts`);
       section.addEventListener("click", APP.delGift);
-      //stop form submissions
       document.querySelector("#modalAddGift form").addEventListener("submit", (ev) => {
         ev.preventDefault();
       });
@@ -222,14 +207,10 @@ const APP = {
           throw new Error(resp.statusText);
         },
         (err) => {
-          //failed to fetch user
           console.warn({ err });
         }
       )
       .then((data) => {
-        //TODO: do the user validation in the API
-        console.log(data);
-        // let user = data.filter((user) => user.email === email);
         APP.owner = data["data"]._id;
         sessionStorage.setItem(APP.OWNERKEY, APP.owner);
         console.log("logged in... go to people page");
@@ -238,12 +219,10 @@ const APP = {
         location.href = `/pages/people.html?owner=${APP.owner}`;
       })
       .catch((err) => {
-        //TODO: global error handler function
         APP.handleError(err);
       });
   },
   registerUser: (payload) => {
-    // email, password, firstName, lastName
     console.log(payload);
     let url = APP.baseURL + "auth/users";
     let options = {
@@ -280,8 +259,6 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
-        /* code goes here */
-        console.log("updated", data);
         let savedMsg = document.querySelector(".updateMsg");
         savedMsg.classList.toggle("hide");
         let updateForm = document.querySelector(".updateForm");
@@ -295,7 +272,6 @@ const APP = {
     let btn = ev.target;
     if (btn.classList.contains("del-gift")) {
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
-      //TODO: remove from DB by calling API
       let url = APP.baseURL + "api/people/" + APP.PID + "/gifts/" + id;
       let options = {
         method: "DELETE",
@@ -311,8 +287,6 @@ const APP = {
           throw new Error(resp.statusText);
         })
         .then((data) => {
-          console.log(data);
-          console.log(APP.GIFTS);
           APP.GIFTS = APP.GIFTS.filter((gift) => {
             return gift._id != id;
           });
@@ -322,13 +296,11 @@ const APP = {
     }
   },
   delOrViewPerson(ev) {
-    ev.preventDefault(); //stop the anchor from leaving the page
+    ev.preventDefault();
     console.log(ev.target);
     let btn = ev.target;
     if (btn.classList.contains("del-person")) {
-      //delete a person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
-      //TODO: remove from DB by calling API
       let url = APP.baseURL + "api/people/" + id;
       let options = {
         method: "DELETE",
@@ -344,36 +316,28 @@ const APP = {
           throw new Error(resp.statusText);
         })
         .then((data) => {
-          console.log(APP.PEOPLE);
-          console.log(data);
-
           APP.PEOPLE = APP.PEOPLE.filter((person) => {
             return person._id != data.data._id;
           });
-          console.log("after filter", APP.PEOPLE);
           APP.buildPeopleList();
         })
         .catch((err) => console.warn(err));
     }
     if (btn.classList.contains("view-gifts")) {
       console.log("go view gifts");
-      //go see the gifts for this person
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
-      //we can pass person_id by sessionStorage or queryString or history.state ?
       let url = `/pages/gifts.html?owner=${APP.owner}&pid=${id}`;
       location.href = url;
     }
   },
   addPerson(ev) {
-    //TODO: add handling for null and undefined or missing values
-    //user clicked the save person button in the modal
     ev.preventDefault();
     let name = document.getElementById("name").value;
     let nameLength = name.trim().length;
     let dob = document.getElementById("dob").value;
     let birthDate = new Date(dob).valueOf();
     if (nameLength == 0 || birthDate == null) {
-      console.warn("Invalid name and date format. Please check again.");
+      window.alert("Invalid name and date format. Please check again.");
       document.querySelector(".modal form").reset();
     } else {
       console.log(name, dob);
@@ -402,12 +366,10 @@ const APP = {
             throw new Error(resp.statusText);
           },
           (err) => {
-            //failed to fetch user
             console.warn({ err });
           }
         )
         .then((data) => {
-          console.log("Added person", data);
           console.log("saved..", data.data);
           APP.PEOPLE.push(data.data);
           console.log(APP.PEOPLE);
@@ -415,7 +377,6 @@ const APP = {
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
-          //TODO: global error handler function
           APP.handleError(err);
         });
     }
@@ -423,20 +384,17 @@ const APP = {
   addGift(ev) {
     ev.preventDefault();
     let name = document.getElementById("name").value;
+    let nameLength = name.trim().length;
     let price = document.getElementById("price").value;
     let storeName = document.getElementById("storeName").value;
-    let storeProductURL = document.getElementById("storeProductURL").value;
-    let urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm ;
-    let pricePattern = /^\d+(,\d{3})*(\.\d{1,2})?$/gm;
-
-    if(urlPattern.test(storeProductURL) && pricePattern.test(price) && name.trim() && storeName.trim()){
-      APP.addGiftToDB(name, price, storeName, storeProductURL)
-    } 
-  },
-  addGiftToDB(name, price, storeName, storeProductURL){
-    //TODO: make all 4 fields required_DONE
-    //TODO: check for valid URL if provided
-    //TODO: provide error messages to user about invalid prices and url
+    let storeNameLength = storeName.trim().length;
+    let storeProductURL = document.getElementById("storeProductURL").value.trim();
+    let urlPattern = /^(http:\/\/|https:\/\/)www.([a-z]{2,100}).([a-z].{2,10})$/;
+    let result = urlPattern.test(storeProductURL);
+    if (nameLength == 0 || isNaN(price) || price < 100 || storeNameLength == 0 || !result) {
+      window.alert("Invalid input. Please check again.");
+      document.querySelector(".modal form").reset();
+    } else {
       let gift = {
         name,
         price,
@@ -445,9 +403,6 @@ const APP = {
           productURL: storeProductURL,
         },
       };
-      console.log("gift", gift);
-      //add the gift to the current person
-      //TODO: Actually send this to the API instead of just updating the array
       let url = APP.baseURL + "api/people/" + APP.PID + "/gifts";
       let options = {
         method: "POST",
@@ -467,24 +422,17 @@ const APP = {
             throw new Error(resp.statusText);
           },
           (err) => {
-            //failed to fetch user
             APP.handleError(err);
           }
         )
         .then((data) => {
-          console.log("Added gift", data);
-          // let idx = data.data.gifts.length;
-          // APP.GIFTS.push(data.data.gifts[idx - 1]);
-          // console.log("after pushed gifts to gift", APP.GIFTS);
-          // APP.PNAME = data.data.name;
-          // APP.buildGiftList();
           APP.getGifts();
           document.querySelector(".modal form").reset();
         })
         .catch((err) => {
-          //TODO: global error handler function
           APP.handleError(err);
         });
+    }
   },
   sendMessage(msg, target) {
     //TODO:
@@ -549,26 +497,18 @@ const APP = {
       let listOwner = document.createElement("p");
       listOwner.innerHTML = `<p class="white-text center giftOwner">Owner : <b>${APP.ownerName}</b></p>`;
       APP.GIFTS.forEach((gift) => {
-        //TODO: add handling for null and undefined or missing values
-        let giftIde = document.querySelector(".idea");
-        let giftPrice = document.querySelector(".price");
-        let giftStore = document.querySelector(".store");
-        let giftStoreWebsite = document.querySelector(".storeWebsite");
-        // if(){}else{}
-        //TODO: check for a valid URL before setting an href
         let gift_card = document.createElement("div");
         let url = gift.store.productURL;
         let urlStr = url;
-        // try {
-        // url = new URL(url);
-        // urlStr = url;
-        // } catch (err) {
-        // if (err.name == "TypeError") {
-        // not a valid url
-        // url = "";
-        // urlStr = "No valid URL provided";
-        // }
-        // }
+        try {
+          url = new URL(url);
+          urlStr = url;
+        } catch (err) {
+          if (err.name == "TypeError") {
+            url = "";
+            urlStr = "No valid URL provided";
+          }
+        }
         gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
             <div class="card-content blue-grey-text text-darken-4">
               <h5 class="card-title idea">
@@ -593,13 +533,8 @@ const APP = {
       div.prepend(giftIdea);
       div.append(df);
     }
-
-    // } else {
-    // APP.handleError();
   },
   getPeople() {
-    //TODO:
-    //get the list of all people for the user_id
     if (!APP.owner) return;
     let url = APP.baseURL + `api/people`;
     let options = {
@@ -621,24 +556,16 @@ const APP = {
         }
       )
       .then((data) => {
-        //TODO: filter this on the serverside NOT here
-        console.log(data);
         APP.PEOPLE = data.data;
         console.log("new app.people", APP.PEOPLE);
         APP.buildPeopleList();
       })
       .catch((err) => {
-        //TODO: global error handler function
         APP.handleError(err);
       });
   },
   getGifts() {
-    // APP.buildGiftList();
-    //TODO:
-    //get the list of all the gifts for the person_id and user_id
     if (!APP.owner) return;
-    // TODO: use a valid URL and queryString for your API
-    // let url = `${APP.baseURL}people.json?owner=${APP.owner}&pid=${APP.PID}`;
     let url = APP.baseURL + "api/people/" + APP.PID;
     let options = {
       method: "GET",
@@ -659,29 +586,17 @@ const APP = {
         }
       )
       .then((data) => {
-        // TODO: filter this on the serverside NOT here
-        // let peeps = data.people.filter((person) => person.owner == APP.owner);
-        // TODO: match the person id with the one from the querystring
-        // let person = peeps.filter((person) => person._id == APP.PID);
-        // APP.PNAME = person[0].name;
-        // APP.GIFTS = person[0].gifts; //person is an array from filter()
-        console.log(data);
         APP.PNAME = data.data.name;
         APP.GIFTS = data.data.gifts;
         APP.buildGiftList();
       })
       .catch((err) => {
-        // TODO: global error handler function
         APP.handleError(err);
       });
   },
   handleError: (err) => {
     console.warn(err);
-    // removed window.alert. TODO: check if other alert should be added.
   },
-  validateURL:(url)=>{
-    
-  }
 };
 
 document.addEventListener("DOMContentLoaded", APP.init);

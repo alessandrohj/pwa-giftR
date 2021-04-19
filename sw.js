@@ -1,4 +1,4 @@
-const version = 3;
+const version = 1;
 let staticName = `pre-v${version}`;
 let dynamicName = `dynamic-v${version}`;
 let cacheSize = 65;
