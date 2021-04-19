@@ -1,5 +1,6 @@
 const APP = {
-  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  baseURL: "http://127.0.0.1:3030/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -160,7 +161,8 @@ const APP = {
 
       //add gift listener
       let btnSave = document.getElementById("btnSaveGift");
-      btnSave.addEventListener("click", APP.addGift);
+      btnSave.addEventListener("click", APP.
+                              );
       //TODO:
       //delete gift listener TODO: Add confirmation for delete
       let section = document.querySelector(`section.gifts`);
@@ -424,9 +426,17 @@ const APP = {
     let price = document.getElementById("price").value;
     let storeName = document.getElementById("storeName").value;
     let storeProductURL = document.getElementById("storeProductURL").value;
+    let urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm ;
+    let pricePattern = /^\d+(,\d{3})*(\.\d{1,2})?$/gm;
+
+    if(urlPattern.test(storeProductURL) && pricePattern.test(price) && name.trim() && storeName.trim()){
+      APP.addGiftToDB(name, price, storeName, storeProductURL)
+    } 
+  },
+  addGiftToDB(name, price, storeName, storeProductURL){
+    //TODO: make all 4 fields required_DONE
     //TODO: check for valid URL if provided
-    //TODO: provide error messages to user about invalid prices and urls
-    if (name.trim() && !isNaN(price) && storeName.trim() && storeProductURL.trim()) {
+    //TODO: provide error messages to user about invalid prices and url
       let gift = {
         name,
         price,
@@ -475,7 +485,6 @@ const APP = {
           //TODO: global error handler function
           APP.handleError(err);
         });
-    }
   },
   sendMessage(msg, target) {
     //TODO:
@@ -670,6 +679,9 @@ const APP = {
     console.warn(err);
     // removed window.alert. TODO: check if other alert should be added.
   },
+  validateURL:(url)=>{
+    
+  }
 };
 
 document.addEventListener("DOMContentLoaded", APP.init);
