@@ -85,9 +85,9 @@ const APP = {
         }
       });
     }
-    //FORGOTPWD PAGE
-    if (APP.page === "forgotPwd") {
-      let btnUpdatePwd = document.getElementById("btnUpdatePwd");
+    //updatePWD PAGE
+    if (APP.page === "updatePwd") {
+      let btnUpdatePwd = document.querySelector(".updateNewPwd");
       btnUpdatePwd.addEventListener("click", (ev) => {
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
@@ -99,8 +99,8 @@ const APP = {
     }
     //REGISTER PAGE
     if (APP.page === "register") {
-      let btnReg = document.getElementById("btnRegister");
-      btnReg.addEventListener("click", (ev) => {
+      let updateNewPwd = document.getElementById("updateNewPwd");
+      updateNewPwd.addEventListener("click", (ev) => {
         let firstName = document.getElementById("firstName").value;
         let lastName = document.getElementById("lastName").value;
         let email = document.getElementById("email").value;
@@ -142,9 +142,9 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
-      let btnForgotPwd = document.querySelector("#btnForgotPwd");
-      btnForgotPwd.addEventListener("click", (ev) => {
-        location.href = "forgotPwd.html";
+      let btnUpdatePwd = document.querySelector("#btnUpdatePwd");
+      btnUpdatePwd.addEventListener("click", (ev) => {
+        location.href = "updatePwd.html";
       });
     }
     //GIFTS PAGE
@@ -161,7 +161,8 @@ const APP = {
 
       //add gift listener
       let btnSave = document.getElementById("btnSaveGift");
-      btnSave.addEventListener("click", APP.addGift);
+      btnSave.addEventListener("click", APP.
+                              );
       //TODO:
       //delete gift listener TODO: Add confirmation for delete
       let section = document.querySelector(`section.gifts`);
@@ -279,11 +280,12 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
-        console.log(data);
-        sessionStorage.removeItem("token");
-        sessionStorage.setItem("token", data.token);
-        // sessionStorage.removeItem("ownerName");
-        // sessionStorage.removeItem(APP.OWNERKEY);
+        /* code goes here */
+        console.log("updated", data);
+        let savedMsg = document.querySelector(".updateMsg");
+        savedMsg.classList.toggle("hide");
+        let updateForm = document.querySelector(".updateForm");
+        updateForm.classList.toggle("hide");
       })
       .catch((err) => console.warn(err));
   },
@@ -363,15 +365,18 @@ const APP = {
     }
   },
   addPerson(ev) {
+    //TODO: add handling for null and undefined or missing values
     //user clicked the save person button in the modal
     ev.preventDefault();
     let name = document.getElementById("name").value;
+    let nameLength = name.trim().length;
     let dob = document.getElementById("dob").value;
     let birthDate = new Date(dob).valueOf();
-    if (name.trim() && birthDate) {
+    if (nameLength == 0 || birthDate == null) {
+      console.warn("Invalid name and date format. Please check again.");
+      document.querySelector(".modal form").reset();
+    } else {
       console.log(name, dob);
-      //TODO: actually send this to the API for saving
-      //TODO: let the API create the _id
       let person = {
         name,
         birthDate,
@@ -416,7 +421,6 @@ const APP = {
     }
   },
   addGift(ev) {
-    //user clicked the save gift button in the modal
     ev.preventDefault();
     let name = document.getElementById("name").value;
     let price = document.getElementById("price").value;
@@ -495,8 +499,6 @@ const APP = {
     div.innerHTML = "";
     let df = document.createDocumentFragment();
     if (div) {
-      //TODO: add handling for null and undefined or missing values
-      //TODO: display message if there are no people
       if (APP.PEOPLE.length == 0) {
         div.innerHTML = `<p class="white-text center ownerIntro">No people on the list. <br> Start to add people on your list!</p>`;
       } else {
@@ -533,64 +535,67 @@ const APP = {
     let div = document.querySelector("section.row.gifts>div");
     div.innerHTML = "";
     let df = document.createDocumentFragment();
-    if (div) {
-      let btnBackPeoplePage = document.querySelector("#btnBackPeoplePage");
-      btnBackPeoplePage.addEventListener("click", (ev) => {
-        location.href = `/pages/people.html?owner=${APP.owner}`;
-      });
-      if (APP.GIFTS.length == 0) {
-        div.innerHTML = `<p class="white-text center ownerIntro">No gift idea on the list.</p>`;
-      } else {
-        let giftIdea = document.createElement("div");
-        giftIdea.innerHTML = `<div class="blue-grey-text text-darken-4 person-name center giftFor">
-        Ideas for <span class="blue-grey-text text-darken-4">${APP.PNAME}</span></a>
-        </div>`;
-        let listOwner = document.createElement("p");
-        listOwner.innerHTML = `<p class="white-text center giftOwner">Owner : <b>${APP.ownerName}</b></p>`;
-        APP.GIFTS.forEach((gift) => {
-          //TODO: add handling for null and undefined or missing values
-          //TODO: check for a valid URL before setting an href
-          let gift_card = document.createElement("div");
-          let url = gift.store.productURL;
-          let urlStr = url;
-          // try {
-          // url = new URL(url);
-          // urlStr = url;
-          // } catch (err) {
-          // if (err.name == "TypeError") {
-          // not a valid url
-          // url = "";
-          // urlStr = "No valid URL provided";
-          // }
-          // }
-          gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
-              <div class="card-content blue-grey-text text-darken-4">
-                <h5 class="card-title idea">
-                  <i class="material-icons">lightbulb</i> ${gift.name}
-                </h5>
-                <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
-                <h6 class="store">
-                  <i class="material-icons">room</i>${gift.store.name}</h6>
-                </h6>
-                <h6 class="link">
-                  <i class="material-icons">link</i>
-                  <a href="${url}" class="" target="_blank">${urlStr}</a>
-                </h6>
-              </div>
-              <div class="fab-anchor">
-                <a class="btn-floating halfway-fab red accent-4 del-gift"><i class="material-icons del-gift">delete</i></a>
-              </div>
-            </div>`;
-          df.append(gift_card);
-        });
-        div.prepend(listOwner);
-        div.prepend(giftIdea);
-        div.append(df);
-      }
+    let btnBackPeoplePage = document.querySelector("#btnBackPeoplePage");
+    btnBackPeoplePage.addEventListener("click", (ev) => {
+      location.href = `/pages/people.html?owner=${APP.owner}`;
+    });
+    if (APP.GIFTS.length == 0) {
+      div.innerHTML = `<p class="white-text center ownerIntro">No gift idea on the list.</p>`;
     } else {
-      //TODO: error message
-      APP.handleError();
+      let giftIdea = document.createElement("div");
+      giftIdea.innerHTML = `<div class="blue-grey-text text-darken-4 person-name center giftFor">
+      Ideas for <span class="blue-grey-text text-darken-4">${APP.PNAME}</span></a>
+      </div>`;
+      let listOwner = document.createElement("p");
+      listOwner.innerHTML = `<p class="white-text center giftOwner">Owner : <b>${APP.ownerName}</b></p>`;
+      APP.GIFTS.forEach((gift) => {
+        //TODO: add handling for null and undefined or missing values
+        let giftIde = document.querySelector(".idea");
+        let giftPrice = document.querySelector(".price");
+        let giftStore = document.querySelector(".store");
+        let giftStoreWebsite = document.querySelector(".storeWebsite");
+        // if(){}else{}
+        //TODO: check for a valid URL before setting an href
+        let gift_card = document.createElement("div");
+        let url = gift.store.productURL;
+        let urlStr = url;
+        // try {
+        // url = new URL(url);
+        // urlStr = url;
+        // } catch (err) {
+        // if (err.name == "TypeError") {
+        // not a valid url
+        // url = "";
+        // urlStr = "No valid URL provided";
+        // }
+        // }
+        gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
+            <div class="card-content blue-grey-text text-darken-4">
+              <h5 class="card-title idea">
+                <i class="material-icons">lightbulb</i> ${gift.name}
+              </h5>
+              <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
+              <h6 class="store">
+                <i class="material-icons">room</i>${gift.store.name}</h6>
+              </h6>
+              <h6 class="link">
+                <i class="material-icons">link</i>
+                <a href="${url}" class="" target="_blank">${urlStr}</a>
+              </h6>
+            </div>
+            <div class="fab-anchor">
+              <a class="btn-floating halfway-fab red accent-4 del-gift"><i class="material-icons del-gift">delete</i></a>
+            </div>
+          </div>`;
+        df.append(gift_card);
+      });
+      div.prepend(listOwner);
+      div.prepend(giftIdea);
+      div.append(df);
     }
+
+    // } else {
+    // APP.handleError();
   },
   getPeople() {
     //TODO:

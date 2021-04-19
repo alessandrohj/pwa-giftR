@@ -1,8 +1,8 @@
-const version = 1;
+const version = 3;
 let staticName = `pre-v${version}`;
 let dynamicName = `dynamic-v${version}`;
 let cacheSize = 65;
-let staticList = ["/", "/index.html", "/pages/gifts.html", "/pages/register.html", "pages/forgotPwd.html", "/pages/people.html", "/pages/404.html", "/css/main.css", "/js/app.js", "/manifest.json", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/offline.png", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
+let staticList = ["/", "/index.html", "/pages/gifts.html", "/pages/register.html", "pages/updatePwd.html", "/pages/people.html", "/pages/404.html", "/css/main.css", "/js/app.js", "/manifest.json", "/js/materialize.min.js", "/css/materialize.min.css", "https://fonts.googleapis.com/icon?family=Material+Icons", "https://fonts.gstatic.com/s/materialicons/v78/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2", "/img/offline.png", "/img/icons/icon-72x72.png", "/img/icons/icon-96x96.png", "/img/icons/icon-128x128.png", "/img/icons/icon-144x144.png", "/img/icons/icon-192x192.png", "/img/icons/icon-384x384.png", "/img/icons/icon-512x512.png"];
 let dynamicList = [];
 self.addEventListener("install", (ev) => {
   console.log("Service Worker has been installed", version, ev);
@@ -47,7 +47,7 @@ self.addEventListener("fetch", (ev) => {
     fetch(ev.request)
       .then((fetchResponse) => {
         return caches.open(dynamicName).then((cache) => {
-          if ((ev.request.method === "GET")) {
+          if (ev.request.method === "GET") {
             cache.put(ev.request, fetchResponse.clone());
           }
           return fetchResponse;
