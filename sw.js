@@ -47,7 +47,7 @@ self.addEventListener("fetch", (ev) => {
     fetch(ev.request)
       .then((fetchResponse) => {
         return caches.open(dynamicName).then((cache) => {
-          if ((ev.request.method = "GET")) {
+          if ((ev.request.method === "GET")) {
             cache.put(ev.request, fetchResponse.clone());
           }
           return fetchResponse;
