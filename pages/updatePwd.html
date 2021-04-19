@@ -16,7 +16,7 @@
     <script src="../js/materialize.min.js"></script>
     <script src="../js/app.js"></script>
   </head>
-  <body id="forgotPwd">
+  <body id="updatePwd">
     <nav>
       <div class="nav-wrapper blue-grey darken-4">
         <a href="#" class="brand-logo center"> Giftr</a>
@@ -25,23 +25,36 @@
     </nav>
     <main class="container">
       <div><a href="/pages/people.html" id="btnBackPeoplePage" class="btn-small blue-grey darken-1 white-text btnHome"><i class="material-icons arrow_back">arrow_back</i></a></div>
-      <div class="row">
-        <form class="col s12 center">
-            <div class="row">
-              <div class="input-field col s12 black-text">
-                <input id="email" type="email" class="validate white-text" />
-                <label for="email" class="white-text">Email</label>
-              </div>
-            </div>
+      <div class="row center">
+        <div class="white-text s10 center updateMsg hide"> <b class="blue-grey-text text-darken-4">Password changed successfully!</b> <br> Go back to the previous page</div>
+        <form class="col s12 center updateForm">
+          <h5 class="blue-grey-text text-darken-4 updateTitle">Update your password</h5>
           <div class="row">
-            <div class="input-field col s12">
-              <input id="password" type="password" class="validate white-text"/>
-              <label for="password" class="white-text">Password</label>
+            <div class="input-field col s12 black-text">
+              <input id="email" type="email" class="validate white-text" />
+              <label for="email" class="white-text">Email</label>
             </div>
           </div>
-          <div class="row ">
-            <div class="col s12 center">
-              <a class="waves-effect waves-light btn blue-grey darken-3" id="btnUpdatePwd">Update Password</a>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="password" class="validate white-text"/>
+            <label for="password" class="white-text">Password</label>
+          </div>
+        </div>
+          <div class="row">
+            <div class="col s6 center">
+              <a href="/pages/people.html"
+                class="waves-effect waves-light btn blue-grey darken-3"
+                id="btnRegister"
+                ><i class="material-icons left">cancel</i>Cancel</a
+              >
+            </div>
+            <div class="col s6 center updateNewPwd">
+              <a
+                class="waves-effect waves-light btn blue-grey darken-3"
+                id="btnLogin"
+                ><i class="material-icons left ">save</i>Save</a
+              >
             </div>
           </div>
         </form>

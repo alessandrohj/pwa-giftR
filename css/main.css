@@ -108,3 +108,18 @@ input[type="url"]:not(.browser-default) {
 #btnForgotPwd {
   font-weight: 300;
 }
+.updateTitle {
+  font-weight: 500;
+  font-size: 1.3rem;
+  margin-top: -3rem;
+}
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+.updateMsg {
+  font-size: 1.5rem;
+  font-weight: 200;
+}

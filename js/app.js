@@ -84,9 +84,9 @@ const APP = {
         }
       });
     }
-    //FORGOTPWD PAGE
-    if (APP.page === "forgotPwd") {
-      let btnUpdatePwd = document.getElementById("btnUpdatePwd");
+    //updatePWD PAGE
+    if (APP.page === "updatePwd") {
+      let btnUpdatePwd = document.querySelector(".updateNewPwd");
       btnUpdatePwd.addEventListener("click", (ev) => {
         let email = document.getElementById("email").value;
         let password = document.getElementById("password").value;
@@ -98,8 +98,8 @@ const APP = {
     }
     //REGISTER PAGE
     if (APP.page === "register") {
-      let btnReg = document.getElementById("btnRegister");
-      btnReg.addEventListener("click", (ev) => {
+      let updateNewPwd = document.getElementById("updateNewPwd");
+      updateNewPwd.addEventListener("click", (ev) => {
         let firstName = document.getElementById("firstName").value;
         let lastName = document.getElementById("lastName").value;
         let email = document.getElementById("email").value;
@@ -141,9 +141,9 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
-      let btnForgotPwd = document.querySelector("#btnForgotPwd");
-      btnForgotPwd.addEventListener("click", (ev) => {
-        location.href = "forgotPwd.html";
+      let btnUpdatePwd = document.querySelector("#btnUpdatePwd");
+      btnUpdatePwd.addEventListener("click", (ev) => {
+        location.href = "updatePwd.html";
       });
     }
     //GIFTS PAGE
@@ -278,11 +278,12 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
-        console.log(data);
-        sessionStorage.removeItem("token");
-        sessionStorage.setItem("token", data.token);
-        // sessionStorage.removeItem("ownerName");
-        // sessionStorage.removeItem(APP.OWNERKEY);
+        /* code goes here */
+        console.log("updated", data);
+        let savedMsg = document.querySelector(".updateMsg");
+        savedMsg.classList.toggle("hide");
+        let updateForm = document.querySelector(".updateForm");
+        updateForm.classList.toggle("hide");
       })
       .catch((err) => console.warn(err));
   },
@@ -557,23 +558,28 @@ const APP = {
           // }
           // }
           gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
-              <div class="card-content blue-grey-text text-darken-4">
-                <h5 class="card-title idea">
-                  <i class="material-icons">lightbulb</i> ${gift.name}
-                </h5>
-                <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
-                <h6 class="store">
-                  <i class="material-icons">room</i>${gift.store.name}</h6>
-                </h6>
-                <h6 class="link">
-                  <i class="material-icons">link</i>
-                  <a href="${url}" class="" target="_blank">${urlStr}</a>
-                </h6>
-              </div>
-              <div class="fab-anchor">
-                <a class="btn-floating halfway-fab red accent-4 del-gift"><i class="material-icons del-gift">delete</i></a>
-              </div>
-            </div>`;
+          <div class="card-content light-green-text text-darken-4">
+            <h5 class="card-title idea">
+              <i class="material-icons">lightbulb</i> ${gift.name}
+            </h5>
+            <h6 class="price"><i class="material-icons">paid</i> ${gift.price}</h6>
+            
+            <h6 class="store">
+              <i class="material-icons">room</i>${gift.store.name}</h6>
+            </h6>
+            <h6 class="link">
+              <i class="material-icons">link</i>
+              <a href="${url}" class="" target="_blank"
+                >${urlStr}</a
+              >
+            </h6>
+          </div>
+          <div class="fab-anchor">
+            <a class="btn-floating halfway-fab red del-gift"
+              ><i class="material-icons del-gift">delete</i></a
+            >
+          </div>
+        </div>`;
           df.append(gift_card);
         });
         div.prepend(listOwner);
@@ -581,7 +587,6 @@ const APP = {
         div.append(df);
       }
     } else {
-      //TODO: error message
       APP.handleError();
     }
   },
