@@ -1,6 +1,6 @@
 const APP = {
   // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  baseURL: "http://127.0.0.1:3030/",
+  baseURL: "https://giftr.mad9124.rocks/", // baseURL: "http://127.0.0.1:3030/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -80,7 +80,7 @@ const APP = {
         if (email && password) {
           APP.getToken(email, password);
         } else {
-          console.warn("No email address");
+          window.alert("Please enter email address and password");
         }
       });
     }
@@ -337,7 +337,7 @@ const APP = {
     let nameLength = name.trim().length;
     let dob = document.getElementById("dob").value;
     let birthDate = new Date(dob).valueOf();
-    if (nameLength == 0 || birthDate == null) {
+    if (nameLength == 0 || dob.length == 0) {
       window.alert("Invalid name and date format. Please check again.");
       document.querySelector(".modal form").reset();
     } else {
