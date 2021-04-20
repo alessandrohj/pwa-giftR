@@ -1,5 +1,6 @@
 const APP = {
-  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  //baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  baseURL: "https://giftr.mad9124.rocks/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -8,6 +9,7 @@ const APP = {
   PEOPLE: [],
   PID: null,
   PNAME: null,
+  test: null,
   init() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").then(
@@ -29,7 +31,6 @@ const APP = {
     APP.addListeners();
   },
   pageLoaded() {
-    console.log("A page is loaded and checking", location.search);
     let params = new URL(document.location).searchParams;
     APP.page = document.body.id;
     switch (APP.page) {
@@ -63,7 +64,6 @@ const APP = {
     }
   },
   addListeners() {
-    console.log(APP.page, "adding listeners");
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
@@ -79,23 +79,21 @@ const APP = {
         if (email && password) {
           APP.getToken(email, password);
         } else {
-          console.warn("No email address");
+          window.alert("Please enter email address and password");
         }
       });
     }
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
       btnUpdatePwd.addEventListener("click", (ev) => {
-        let email = document.getElementById("email").value.trim();
+        let email = sessionStorage.getItem("ownerEmail");
         let password = document.getElementById("password").value;
-        let passwordLength = password.trim().length;
-        if (email && passwordLength >= 1) {
+        let confirmPwd = document.querySelector("#confirmPassword").value;
+        if (password == confirmPwd) {
           let payload = { emailAddress: email, pass: password };
-          if (payload) {
-            APP.updatePwd(payload);
-          }
+          APP.updatePwd(payload);
         } else {
-          window.alert("Invalid email or password. Please check it again");
+          window.alert("Passwords are different. Please check again");
           document.querySelector(".updateForm").reset();
         }
       });
@@ -179,11 +177,9 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
-        console.log("This is the token", data["data"].token);
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
-
         APP.validateToken(data["data"].token);
       })
       .catch((err) => window.alert("Please check your email or password again"));
@@ -213,8 +209,9 @@ const APP = {
       .then((data) => {
         APP.owner = data["data"]._id;
         sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-        console.log("logged in... go to people page");
+        console.log("Logged in... go to people page");
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
+        sessionStorage.setItem("ownerEmail", data.data.email);
         sessionStorage.setItem("ownerName", APP.ownerName);
         location.href = `/pages/people.html?owner=${APP.owner}`;
       })
@@ -336,7 +333,7 @@ const APP = {
     let nameLength = name.trim().length;
     let dob = document.getElementById("dob").value;
     let birthDate = new Date(dob).valueOf();
-    if (nameLength == 0 || birthDate == null) {
+    if (nameLength == 0 || dob.length == 0) {
       window.alert("Invalid name and date format. Please check again.");
       document.querySelector(".modal form").reset();
     } else {
@@ -370,9 +367,7 @@ const APP = {
           }
         )
         .then((data) => {
-          console.log("saved..", data.data);
           APP.PEOPLE.push(data.data);
-          console.log(APP.PEOPLE);
           APP.buildPeopleList();
           document.querySelector(".modal form").reset();
         })
@@ -389,7 +384,7 @@ const APP = {
     let storeName = document.getElementById("storeName").value;
     let storeNameLength = storeName.trim().length;
     let storeProductURL = document.getElementById("storeProductURL").value.trim();
-    let urlPattern = /^(http:\/\/|https:\/\/)www.([a-z]{2,100}).([a-z].{2,10})$/;
+    let urlPattern = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm;
     let result = urlPattern.test(storeProductURL);
     if (nameLength == 0 || isNaN(price) || price < 100 || storeNameLength == 0 || !result) {
       window.alert("Invalid input. Please check again.");
@@ -434,13 +429,13 @@ const APP = {
         });
     }
   },
-  sendMessage(msg, target) {
-    //TODO:
-    //send a message to the service worker
+  sendMessage(msg) {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(msg);
+    }
   },
   onMessage({ data }) {
-    //TODO:
-    //message received from service worker
+    console.log("Received data:", data);
   },
   buildPeopleList: () => {
     let div = document.querySelector("section.row.people>div");
@@ -475,7 +470,6 @@ const APP = {
         div.append(df);
       }
     } else {
-      //TODO: error message
       APP.handleError();
     }
   },
@@ -500,15 +494,6 @@ const APP = {
         let gift_card = document.createElement("div");
         let url = gift.store.productURL;
         let urlStr = url;
-        try {
-          url = new URL(url);
-          urlStr = url;
-        } catch (err) {
-          if (err.name == "TypeError") {
-            url = "";
-            urlStr = "No valid URL provided";
-          }
-        }
         gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
             <div class="card-content blue-grey-text text-darken-4">
               <h5 class="card-title idea">
@@ -557,7 +542,6 @@ const APP = {
       )
       .then((data) => {
         APP.PEOPLE = data.data;
-        console.log("new app.people", APP.PEOPLE);
         APP.buildPeopleList();
       })
       .catch((err) => {
