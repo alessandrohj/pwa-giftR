@@ -1,6 +1,6 @@
 const APP = {
-  //baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  baseURL: "https://giftr.mad9124.rocks/",
+  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  //baseURL: "https://giftr.mad9124.rocks/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -220,7 +220,6 @@ const APP = {
       });
   },
   registerUser: (payload) => {
-    console.log(payload);
     let url = APP.baseURL + "auth/users";
     let options = {
       method: "POST",
@@ -240,7 +239,6 @@ const APP = {
       .catch((err) => console.warn(err));
   },
   updatePwd: (payload) => {
-    console.log(payload);
     let url = APP.baseURL + "auth/users/me";
     let options = {
       method: "PATCH",
@@ -265,7 +263,6 @@ const APP = {
   },
   delGift(ev) {
     ev.preventDefault();
-    console.log(ev.target);
     let btn = ev.target;
     if (btn.classList.contains("del-gift")) {
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
@@ -294,7 +291,6 @@ const APP = {
   },
   delOrViewPerson(ev) {
     ev.preventDefault();
-    console.log(ev.target);
     let btn = ev.target;
     if (btn.classList.contains("del-person")) {
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
@@ -321,7 +317,6 @@ const APP = {
         .catch((err) => console.warn(err));
     }
     if (btn.classList.contains("view-gifts")) {
-      console.log("go view gifts");
       let id = btn.closest(".card[data-id]").getAttribute("data-id");
       let url = `/pages/gifts.html?owner=${APP.owner}&pid=${id}`;
       location.href = url;
@@ -443,7 +438,7 @@ const APP = {
     let df = document.createDocumentFragment();
     if (div) {
       if (APP.PEOPLE.length == 0) {
-        div.innerHTML = `<p class="white-text center ownerIntro">No people on the list. <br> Start to add people on your list!</p>`;
+        div.innerHTML = `<p class="white-text center ownerIntro">No people on the list.</p>`;
       } else {
         let listOwner = document.createElement("p");
         listOwner.innerHTML = `<p class="white-text center ownerIntro">Owner : ${APP.ownerName}</.>`;
