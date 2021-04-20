@@ -184,7 +184,6 @@ const APP = {
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
-
         APP.validateToken(data["data"].token);
       })
       .catch((err) => window.alert("Please check your email or password again"));
@@ -435,13 +434,13 @@ const APP = {
         });
     }
   },
-  sendMessage(msg, target) {
-    //TODO:
-    //send a message to the service worker
+  sendMessage(msg) {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage(msg);
+    }
   },
   onMessage({ data }) {
-    //TODO:
-    //message received from service worker
+    console.log("Received data:", data);
   },
   buildPeopleList: () => {
     let div = document.querySelector("section.row.people>div");
