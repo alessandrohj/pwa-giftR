@@ -1,5 +1,6 @@
 const APP = {
-  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  baseURL: "http://127.0.0.1:3030/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -389,7 +390,7 @@ const APP = {
     let storeName = document.getElementById("storeName").value;
     let storeNameLength = storeName.trim().length;
     let storeProductURL = document.getElementById("storeProductURL").value.trim();
-    let urlPattern = /^(http:\/\/|https:\/\/)www.([a-z]{2,100}).([a-z].{2,10})$/;
+    let urlPattern = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm;
     let result = urlPattern.test(storeProductURL);
     if (nameLength == 0 || isNaN(price) || price < 100 || storeNameLength == 0 || !result) {
       window.alert("Invalid input. Please check again.");
@@ -500,15 +501,15 @@ const APP = {
         let gift_card = document.createElement("div");
         let url = gift.store.productURL;
         let urlStr = url;
-        try {
-          url = new URL(url);
-          urlStr = url;
-        } catch (err) {
-          if (err.name == "TypeError") {
-            url = "";
-            urlStr = "No valid URL provided";
-          }
-        }
+        // try {
+        //   url = new URL(url, 'http://');
+        //   urlStr = url;
+        // } catch (err) {
+        //   if (err.name == "TypeError") {
+        //     url = "";
+        //     urlStr = "No valid URL provided";
+        //   }
+        // }
         gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
             <div class="card-content blue-grey-text text-darken-4">
               <h5 class="card-title idea">
