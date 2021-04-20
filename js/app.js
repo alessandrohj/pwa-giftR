@@ -86,16 +86,14 @@ const APP = {
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
       btnUpdatePwd.addEventListener("click", (ev) => {
-        let email = document.getElementById("email").value.trim();
+        let email = sessionStorage.getItem("ownerEmail");
         let password = document.getElementById("password").value;
-        let passwordLength = password.trim().length;
-        if (email && passwordLength >= 1) {
+        let confirmPwd = document.querySelector("#confirmPassword").value;
+        if (password == confirmPwd) {
           let payload = { emailAddress: email, pass: password };
-          if (payload) {
-            APP.updatePwd(payload);
-          }
+          APP.updatePwd(payload);
         } else {
-          window.alert("Invalid email or password. Please check it again");
+          window.alert("Passwords are different. Please check again");
           document.querySelector(".updateForm").reset();
         }
       });
@@ -213,6 +211,7 @@ const APP = {
         sessionStorage.setItem(APP.OWNERKEY, APP.owner);
         console.log("Logged in... go to people page");
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
+        sessionStorage.setItem("ownerEmail", data.data.email);
         sessionStorage.setItem("ownerName", APP.ownerName);
         location.href = `/pages/people.html?owner=${APP.owner}`;
       })
