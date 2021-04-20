@@ -1,6 +1,6 @@
 const APP = {
-  // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  baseURL: "https://giftr.mad9124.rocks/", // baseURL: "http://127.0.0.1:3030/",
+  //baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  baseURL: "https://giftr.mad9124.rocks/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
@@ -9,6 +9,7 @@ const APP = {
   PEOPLE: [],
   PID: null,
   PNAME: null,
+  test: null,
   init() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").then(
@@ -30,7 +31,6 @@ const APP = {
     APP.addListeners();
   },
   pageLoaded() {
-    console.log("A page is loaded and checking", location.search);
     let params = new URL(document.location).searchParams;
     APP.page = document.body.id;
     switch (APP.page) {
@@ -64,7 +64,6 @@ const APP = {
     }
   },
   addListeners() {
-    console.log(APP.page, "adding listeners");
     if (APP.page === "home") {
       let btnReg = document.getElementById("btnRegister");
       btnReg.addEventListener("click", (ev) => {
@@ -180,7 +179,6 @@ const APP = {
         if (response.ok) return response.json();
       })
       .then((data) => {
-        console.log("This is the token", data["data"].token);
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("token", data["data"].token);
         sessionStorage.setItem("ownerName", APP.ownerName);
@@ -213,7 +211,7 @@ const APP = {
       .then((data) => {
         APP.owner = data["data"]._id;
         sessionStorage.setItem(APP.OWNERKEY, APP.owner);
-        console.log("logged in... go to people page");
+        console.log("Logged in... go to people page");
         APP.ownerName = data.data.firstName + " " + data.data.lastName;
         sessionStorage.setItem("ownerName", APP.ownerName);
         location.href = `/pages/people.html?owner=${APP.owner}`;
@@ -370,9 +368,7 @@ const APP = {
           }
         )
         .then((data) => {
-          console.log("saved..", data.data);
           APP.PEOPLE.push(data.data);
-          console.log(APP.PEOPLE);
           APP.buildPeopleList();
           document.querySelector(".modal form").reset();
         })
@@ -475,7 +471,6 @@ const APP = {
         div.append(df);
       }
     } else {
-      //TODO: error message
       APP.handleError();
     }
   },
@@ -500,15 +495,6 @@ const APP = {
         let gift_card = document.createElement("div");
         let url = gift.store.productURL;
         let urlStr = url;
-        // try {
-        //   url = new URL(url, 'http://');
-        //   urlStr = url;
-        // } catch (err) {
-        //   if (err.name == "TypeError") {
-        //     url = "";
-        //     urlStr = "No valid URL provided";
-        //   }
-        // }
         gift_card.innerHTML = `<div class="card gift" data-id="${gift._id}">
             <div class="card-content blue-grey-text text-darken-4">
               <h5 class="card-title idea">
@@ -557,7 +543,6 @@ const APP = {
       )
       .then((data) => {
         APP.PEOPLE = data.data;
-        console.log("new app.people", APP.PEOPLE);
         APP.buildPeopleList();
       })
       .catch((err) => {
