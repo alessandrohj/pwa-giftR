@@ -10,6 +10,7 @@ const APP = {
   PID: null,
   PNAME: null,
   test: null,
+  deferredInstall: null,
   init() {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").then(
@@ -82,6 +83,11 @@ const APP = {
           window.alert("Please enter email address and password");
         }
       });
+      window.addEventListener('beforeinstallprompt', (ev) => {
+        ev.preventDefault();
+        APP.deferredInstall = ev;
+        console.log('deferredPrompt saved');
+      });
     }
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
@@ -138,6 +144,8 @@ const APP = {
       btnUpdatePwd.addEventListener("click", (ev) => {
         location.href = "updatePwd.html";
       });
+      let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
     }
     if (APP.page === "gifts") {
       let elemsG = document.querySelectorAll(".modal");
@@ -575,6 +583,18 @@ const APP = {
   },
   handleError: (err) => {
     console.warn(err);
+  },
+  installApp: ()=>{
+    if(APP.deferredInstall){
+      APP.deferredInstall.prompt();
+      APP.deferredInstall.userChoice.then((choice)=>{
+        if(choice.outcome == 'accepted') {
+          console.log('App installed');
+        } else {
+          console.log('User cancelled installation');
+        }
+      })
+    }
   },
 };
 
