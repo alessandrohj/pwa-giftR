@@ -103,6 +103,11 @@ const APP = {
           document.querySelector(".updateForm").reset();
         }
       });
+      window.addEventListener('beforeinstallprompt', (ev) => {
+        ev.preventDefault();
+        APP.deferredInstall = ev;
+        console.log('deferredPrompt saved');
+      });
     }
     if (APP.page === "register") {
       let btnRegister = document.getElementById("btnRegister");
@@ -144,6 +149,11 @@ const APP = {
       btnUpdatePwd.addEventListener("click", (ev) => {
         location.href = "updatePwd.html";
       });
+      window.addEventListener('beforeinstallprompt', (ev) => {
+        ev.preventDefault();
+        APP.deferredInstall = ev;
+        console.log('deferredPrompt saved');
+      });
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
     }
@@ -168,6 +178,13 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
+      window.addEventListener('beforeinstallprompt', (ev) => {
+        ev.preventDefault();
+        APP.deferredInstall = ev;
+        console.log('deferredPrompt saved');
+      });
+        let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
     }
   },
   getToken: (email, password) => {
