@@ -83,10 +83,17 @@ const APP = {
           window.alert("Please enter email address and password");
         }
       });
-      window.addEventListener('beforeinstallprompt', (ev) => {
+      window.addEventListener("beforeinstallprompt", (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
+<<<<<<< HEAD
+=======
+      window.addEventListener("appinstalled", (evt) => {
+        let install = document.querySelector("#btninstall");
+        install.classList.add("hide");
+      });
+>>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
@@ -94,8 +101,9 @@ const APP = {
         let email = sessionStorage.getItem("ownerEmail");
         let password = document.getElementById("password").value;
         let confirmPwd = document.querySelector("#confirmPassword").value;
-        if (password.length == 0){
-          window.alert("Password should be at least 1 character.")
+        if (password.length == 0) {
+          window.alert("Password should be at least 1 character.");
+          return;
         }
         if (password == confirmPwd) {
           let payload = { emailAddress: email, pass: password };
@@ -105,12 +113,20 @@ const APP = {
           document.querySelector(".updateForm").reset();
         }
       });
-      window.addEventListener('beforeinstallprompt', (ev) => {
+      window.addEventListener("beforeinstallprompt", (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
+<<<<<<< HEAD
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
+=======
+      let install = document.querySelector("#btninstall");
+      install.addEventListener("click", APP.installApp);
+      window.addEventListener("appinstalled", (ev) => {
+        install.classList.add("hide");
+      });
+>>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "register") {
       let btnRegister = document.getElementById("btnRegister");
@@ -148,13 +164,21 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
-      window.addEventListener('beforeinstallprompt', (ev) => {
+      window.addEventListener("beforeinstallprompt", (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
-        console.log('deferredPrompt saved');
+        console.log("deferredPrompt saved");
       });
+<<<<<<< HEAD
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
+=======
+      let install = document.querySelector("#btninstall");
+      install.addEventListener("click", APP.installApp);
+      window.addEventListener("appinstalled", (ev) => {
+        install.classList.add("hide");
+      });
+>>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "gifts") {
       let elemsG = document.querySelectorAll(".modal");
@@ -177,13 +201,22 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
-      window.addEventListener('beforeinstallprompt', (ev) => {
+      window.addEventListener("beforeinstallprompt", (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
-        console.log('deferredPrompt saved');
+        console.log("deferredPrompt saved");
       });
+<<<<<<< HEAD
         let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
+=======
+      let install = document.querySelector("#btninstall");
+      install.addEventListener("click", APP.installApp);
+
+      window.addEventListener("appinstalled", (ev) => {
+        install.classList.add("hide");
+      });
+>>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
   },
   getToken: (email, password) => {
@@ -600,16 +633,16 @@ const APP = {
   handleError: (err) => {
     console.warn(err);
   },
-  installApp: ()=>{
-    if(APP.deferredInstall){
+  installApp: () => {
+    if (APP.deferredInstall) {
       APP.deferredInstall.prompt();
-      APP.deferredInstall.userChoice.then((choice)=>{
-        if(choice.outcome == 'accepted') {
-          console.log('App installed');
+      APP.deferredInstall.userChoice.then((choice) => {
+        if (choice.outcome == "accepted") {
+          console.log("App installed");
         } else {
-          console.log('User cancelled installation');
+          console.log("User cancelled installation");
         }
-      })
+      });
     }
   },
 };
