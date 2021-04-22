@@ -87,13 +87,6 @@ const APP = {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
-<<<<<<< HEAD
-=======
-      window.addEventListener("appinstalled", (evt) => {
-        let install = document.querySelector("#btninstall");
-        install.classList.add("hide");
-      });
->>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
@@ -117,16 +110,8 @@ const APP = {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
-<<<<<<< HEAD
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
-=======
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
->>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "register") {
       let btnRegister = document.getElementById("btnRegister");
@@ -169,16 +154,8 @@ const APP = {
         APP.deferredInstall = ev;
         console.log("deferredPrompt saved");
       });
-<<<<<<< HEAD
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
-=======
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
->>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
     }
     if (APP.page === "gifts") {
       let elemsG = document.querySelectorAll(".modal");
@@ -206,18 +183,8 @@ const APP = {
         APP.deferredInstall = ev;
         console.log("deferredPrompt saved");
       });
-<<<<<<< HEAD
         let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
-=======
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
->>>>>>> 5d43de03a246774bbfee1604ade500c3208badb2
-    }
   },
   getToken: (email, password) => {
     let url = APP.baseURL + "auth/tokens";
