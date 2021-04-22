@@ -86,7 +86,10 @@ const APP = {
       window.addEventListener('beforeinstallprompt', (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
-        console.log('deferredPrompt saved');
+      });
+      window.addEventListener('appinstalled', (evt) => {
+        let install = document.querySelector('#btninstall');
+        install.classList.add('hide');
       });
     }
     if (APP.page === "updatePwd") {
@@ -95,6 +98,9 @@ const APP = {
         let email = sessionStorage.getItem("ownerEmail");
         let password = document.getElementById("password").value;
         let confirmPwd = document.querySelector("#confirmPassword").value;
+        if (password.length == 0){
+          window.alert("Password should be at least 1 character.")
+        }
         if (password == confirmPwd) {
           let payload = { emailAddress: email, pass: password };
           APP.updatePwd(payload);
@@ -106,7 +112,12 @@ const APP = {
       window.addEventListener('beforeinstallprompt', (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
-        console.log('deferredPrompt saved');
+      });
+      let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
+
+      window.addEventListener('appinstalled', (ev) => {
+        install.classList.add('hide');
       });
     }
     if (APP.page === "register") {
@@ -145,10 +156,6 @@ const APP = {
         sessionStorage.removeItem("ownerName");
         sessionStorage.removeItem(APP.OWNERKEY);
       });
-      let btnUpdatePwd = document.querySelector("#btnUpdatePwd");
-      btnUpdatePwd.addEventListener("click", (ev) => {
-        location.href = "updatePwd.html";
-      });
       window.addEventListener('beforeinstallprompt', (ev) => {
         ev.preventDefault();
         APP.deferredInstall = ev;
@@ -156,6 +163,9 @@ const APP = {
       });
       let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
+      window.addEventListener('appinstalled', (ev) => {
+        install.classList.add('hide');
+      });
     }
     if (APP.page === "gifts") {
       let elemsG = document.querySelectorAll(".modal");
@@ -185,6 +195,10 @@ const APP = {
       });
         let install = document.querySelector('#btninstall');
       install.addEventListener('click', APP.installApp);
+
+      window.addEventListener('appinstalled', (ev) => {
+        install.classList.add('hide');
+      });
     }
   },
   getToken: (email, password) => {
