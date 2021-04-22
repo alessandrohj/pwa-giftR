@@ -87,10 +87,6 @@ const APP = {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
-      window.addEventListener("appinstalled", (evt) => {
-        let install = document.querySelector("#btninstall");
-        install.classList.add("hide");
-      });
     }
     if (APP.page === "updatePwd") {
       let btnUpdatePwd = document.querySelector(".updateNewPwd");
@@ -114,11 +110,8 @@ const APP = {
         ev.preventDefault();
         APP.deferredInstall = ev;
       });
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
+      let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
     }
     if (APP.page === "register") {
       let btnRegister = document.getElementById("btnRegister");
@@ -161,11 +154,8 @@ const APP = {
         APP.deferredInstall = ev;
         console.log("deferredPrompt saved");
       });
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
+      let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
     }
     if (APP.page === "gifts") {
       let elemsG = document.querySelectorAll(".modal");
@@ -193,13 +183,8 @@ const APP = {
         APP.deferredInstall = ev;
         console.log("deferredPrompt saved");
       });
-      let install = document.querySelector("#btninstall");
-      install.addEventListener("click", APP.installApp);
-
-      window.addEventListener("appinstalled", (ev) => {
-        install.classList.add("hide");
-      });
-    }
+        let install = document.querySelector('#btninstall');
+      install.addEventListener('click', APP.installApp);
   },
   getToken: (email, password) => {
     let url = APP.baseURL + "auth/tokens";
