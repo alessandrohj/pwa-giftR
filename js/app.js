@@ -1,6 +1,6 @@
 const APP = {
-  baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
-  //baseURL: "https://giftr.mad9124.rocks/",
+  // baseURL: "http://giftr-api-elb2-1386159590.us-east-1.elb.amazonaws.com/",
+  baseURL: "https://giftr.mad9124.rocks/",
   OWNERKEY: "giftr-<Gyuyoung-Lee/Alessandro-deJesus>-owner",
   token: sessionStorage.getItem("token"),
   owner: null,
